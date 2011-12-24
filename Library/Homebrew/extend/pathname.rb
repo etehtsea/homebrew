@@ -84,7 +84,7 @@ class Pathname
     raise unless e.errno == Errno::ENOTEMPTY::Errno or e.errno == Errno::EACCES::Errno
     false
   end
-  
+
   def chmod_R perms
     require 'fileutils'
     FileUtils.chmod_R perms, to_s
@@ -135,7 +135,7 @@ class Pathname
     # eg. ruby-1.9.1-p243
     /-((\d+\.)*\d\.\d+-(p|rc|RC)?\d+)$/.match stem
     return $1 if $1
-    
+
     # eg. lame-398-1
     /-((\d)+-\d)/.match stem
     return $1 if $1
@@ -181,7 +181,7 @@ class Pathname
 
     nil
   end
-  
+
   def incremental_hash(hasher)
     incr_hash = hasher.new
     self.open('r') do |f|
@@ -196,12 +196,12 @@ class Pathname
     require 'digest/md5'
     incremental_hash(Digest::MD5)
   end
-  
+
   def sha1
     require 'digest/sha1'
     incremental_hash(Digest::SHA1)
   end
-  
+
   def sha2
     require 'digest/sha2'
     incremental_hash(Digest::SHA2)

@@ -34,7 +34,7 @@ class FormulaTests < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_class_naming
     assert_equal 'ShellFm', Formula.class_s('shell.fm')
     assert_equal 'Fooxx', Formula.class_s('foo++')
@@ -46,7 +46,7 @@ class FormulaTests < Test::Unit::TestCase
   def test_cant_override_brew
     assert_raises(RuntimeError) { TestBallOverrideBrew.new }
   end
-  
+
   def test_abstract_formula
     f=MostlyAbstractFormula.new
     assert_equal '__UNKNOWN__', f.name

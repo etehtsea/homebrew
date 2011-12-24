@@ -44,7 +44,7 @@ class BeerTasting < Test::Unit::TestCase
   def test_formula_funcs
     classname=Formula.class_s(FOOBAR)
     path=Formula.path(FOOBAR)
-    
+
     assert_equal "FooBar", classname
     assert_match Regexp.new("^#{HOMEBREW_PREFIX}/Library/Formula"), path.to_s
 
@@ -62,14 +62,14 @@ class BeerTasting < Test::Unit::TestCase
         end
       }
     end
-    
+
     assert_not_nil Formula.factory(FOOBAR)
   end
-  
+
   def test_zip
     nostdout { assert_nothing_raised { TestZip.new.brew {} } }
   end
-  
+
   # needs resurrecting
   # def test_no_ARGV_dupes
   #   ARGV.reset
@@ -78,7 +78,7 @@ class BeerTasting < Test::Unit::TestCase
   #   ARGV.named.each{|f| n+=1 if f == 'foo'}
   #   assert_equal 1, n
   # end
-  
+
   def test_brew_h
     require 'cmd/info'
     require 'cmd/prune'
@@ -125,7 +125,7 @@ class BeerTasting < Test::Unit::TestCase
   end
 
   def test_my_float_assumptions
-    # this may look ridiculous but honestly there's code in brewit that depends on 
+    # this may look ridiculous but honestly there's code in brewit that depends on
     # this behaviour so I wanted to be certain Ruby floating points are behaving
     f='10.6'.to_f
     assert_equal 10.6, f
@@ -140,13 +140,13 @@ class BeerTasting < Test::Unit::TestCase
     d.mkpath
     assert_equal '0.1.9', d.version
   end
-  
+
   def test_pathname_plus_yeast
     nostdout do
       assert_nothing_raised do
         assert !Pathname.getwd.rmdir_if_possible
         assert !Pathname.getwd.abv.empty?
-        
+
         abcd=orig_abcd=HOMEBREW_CACHE+'abcd'
         FileUtils.cp ABS__FILE__, abcd
         abcd=HOMEBREW_PREFIX.install abcd
@@ -158,7 +158,7 @@ class BeerTasting < Test::Unit::TestCase
         abcd.unlink
         abcd.write 'HELLOWORLD'
         assert_equal 'HELLOWORLD', File.read(abcd)
-        
+
         assert !orig_abcd.exist?
         rv=abcd.cp orig_abcd
         assert orig_abcd.exist?
@@ -173,10 +173,10 @@ class BeerTasting < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_pathname_properties
     foo1 = HOMEBREW_CACHE/'foo-0.1.tar.gz'
-    
+
     assert_equal '.tar.gz', foo1.extname
     assert_equal 'foo-0.1', foo1.stem
     assert_equal '0.1', foo1.version

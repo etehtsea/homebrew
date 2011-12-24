@@ -39,7 +39,7 @@ class Hardware
   def self.processor_count
     @@processor_count ||= `/usr/sbin/sysctl -n hw.ncpu`.to_i
   end
-  
+
   def self.cores_as_words
     case Hardware.processor_count
     when 1 then 'single'
@@ -57,7 +57,7 @@ class Hardware
   def self.is_64_bit?
     self.sysctl_bool("hw.cpu64bit_capable")
   end
-  
+
   def self.bits
     Hardware.is_64_bit? ? 64 : 32
   end

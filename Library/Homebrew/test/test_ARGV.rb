@@ -22,14 +22,14 @@ class ARGVTests < Test::Unit::TestCase
     assert_raises(FormulaUnspecifiedError) { ARGV.formulae }
     assert_raises(KegUnspecifiedError) { ARGV.kegs }
     assert ARGV.named.empty?
-    
+
     (HOMEBREW_CELLAR+'mxcl/10.0').mkpath
-    
+
     ARGV.reset
     ARGV.unshift 'mxcl'
     assert_equal 1, ARGV.named.length
     assert_equal 1, ARGV.kegs.length
     assert_raises(FormulaUnavailableError) { ARGV.formulae }
   end
-  
+
 end

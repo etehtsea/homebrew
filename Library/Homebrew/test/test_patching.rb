@@ -37,7 +37,7 @@ class PatchingTests < Test::Unit::TestCase
   def read_file path
     File.open(path, 'r') { |f| f.read }
   end
-  
+
   def test_single_patch
     nostdout do
       DefaultPatchBall.new('test_patch').brew do

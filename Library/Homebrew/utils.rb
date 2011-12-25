@@ -115,7 +115,7 @@ def puts_columns items, star_items=[]
   return if items.empty?
 
   if star_items && star_items.any?
-    items = items.map{|item| star_items.include?(item) ? "#{item}*" : item}
+    items = items.map{ |item| star_items.include?(item) ? "#{item}*" : item }
   end
 
   if $stdout.tty?
@@ -126,7 +126,7 @@ def puts_columns items, star_items=[]
     optimal_col_width = (console_width.to_f / (longest.length + 2).to_f).floor
     cols = optimal_col_width > 1 ? optimal_col_width : 1
 
-    IO.popen("/usr/bin/pr -#{cols} -t -w#{console_width}", "w"){|io| io.puts(items) }
+    IO.popen("/usr/bin/pr -#{cols} -t -w#{console_width}", "w"){ |io| io.puts(items) }
   else
     puts items
   end

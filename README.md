@@ -6,13 +6,14 @@ Fork's TODO-List:
 ----------------
 1.  *Make homebrew modular*;
   *   <del>*Extract formulas to own repository*</del>. This idea was declined a couple of
-      times mxcl/homebrew#3991, mxcl/homebrew#236. Keeping formulas in the core
-      makes homebrew a little bit harder to maintain and contribute;
+      times [mxcl/homebrew#3991](https://github.com/mxcl/homebrew/issues/3991),
+      [mxcl/homebrew#236](https://github.com/mxcl/homebrew/issues/9018). Keeping formulas
+      in the core makes homebrew a little bit harder to maintain and contribute;
   *   <del>*`homebrew selfupdate` command*</del>; After extracting formulas to own
       repository will be easy to update them and core separately.
   *   *Split-up core and cmd app*. Library should provide
       an API that could be used by other application (GUI, for example);
-  *   Extract 'Contributions' to *homebrew-contrib* repo (?);
+  *   *Extract 'Contributions' to 'homebrew-contrib' repo* (?);
 2. *3rd party formulas repos support* (?);
 3. *GUI application*; (?)
 4. *MacRuby support*; (?)

@@ -114,8 +114,15 @@ end
 def puts_columns items, star_items=[]
   return if items.empty?
 
-  if star_items && star_items.any?
-    items = items.map{ |item| star_items.include?(item) ? "#{item}*" : item }
+  if star_items.empty?
+    # get installed formulas list
+    star_items = HOMEBREW_CELLAR.children.
+      select { |pn| pn.directory? }.
+      map    { |pn| pn.basename.to_s }.sort if HOMEBREW_CELLAR.directory?
+  end
+
+  if star_items.any?
+    items.map!{ |item| star_items.include?(item) ? "#{item}*" : item }
   end
 
   if $stdout.tty?

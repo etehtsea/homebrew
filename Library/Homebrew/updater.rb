@@ -1,6 +1,8 @@
 class Updater
   def initialize
     abort "Please `brew install git' first." unless system "/usr/bin/which -s git"
+
+    report
   end
 
   def git_repo?
@@ -9,22 +11,22 @@ class Updater
 
   # Performs an update of the homebrew source. Returns +true+ if a newer
   # version was available, +false+ if already up-to-date.
-  def update!(path, repository_url)
+  def update!
     initial, current = nil, nil
 
-    path.cd do
+    @settings[:repo_dir].cd do
       if git_repo?
         safe_system "git checkout -q master"
         initial = read_revision
         # originally we fetched by URL but then we decided that we should
         # use origin so that it's easier for forks to operate seamlessly
         unless `git remote`.split.include? 'origin'
-          safe_system "git remote add origin #{repository_url}"
+          safe_system "git remote add origin #{@settings[:repo_url]}"
         end
       else
         begin
           safe_system "git init"
-          safe_system "git remote add origin #{repository_url}"
+          safe_system "git remote add origin #{@settings[:repo_url]}"
           safe_system "git fetch origin"
           safe_system "git reset --hard origin/master"
         rescue Exception
@@ -43,10 +45,10 @@ class Updater
 
     if initial && initial != current
       # hash with status characters for keys:
-      # Added (A), Copied (C), Deleted (D), Modified (M), Renamed (R)
+      # Added (A), Deleted (D), Modified (M)
       @changes_map = Hash.new { |h, k| h[k] = [] }
 
-      changes = path.cd do
+      changes = @settings[:repo_dir].cd do
         execute("git diff-tree -r --name-status -z #{initial} #{current}").split("\0")
       end
 
@@ -56,7 +58,9 @@ class Updater
       end
 
       if @changes_map.any?
-        yield
+        @changes = { 'New'     => changed_items('A', @settings[:track_dir]),
+                     'Updated' => changed_items('M', @settings[:track_dir]),
+                     'Deleted' => changed_items('D', @settings[:track_dir]) }
 
         return [initial, current]
       end
@@ -67,22 +71,16 @@ class Updater
     return false
   end
 
-  def report(title, repo, url)
-    revisions = update!(repo, url) do
-      yield
-    end
+  def report
+    revisions = update!
 
     if revisions
-      puts "Updated #{title} from #{revisions.first[0,8]} to #{revisions.last[0,8]}."
+      puts "Updated #{@settings[:title]} from #{revisions.first[0,8]} to #{revisions.last[0,8]}."
 
-      @sections.each do |title, changes|
-        unless changes.first.empty?
-          ohai(title)
-          if changes.size == 2
-            puts_columns changes.first, changes.last
-          else
-            puts_columns changes
-          end
+      @changes.each do |type, changes|
+        unless changes.empty?
+          ohai("#{type} #{@settings[:title_type]}")
+          puts_columns changes
         end
       end
     else
@@ -103,7 +101,6 @@ class Updater
     files.map { |f| File.basename(f, '.rb') }
   end
 
-  # extracts items by status from @changes_map
   def changed_items(status, dir)
     basenames(filter_by_directory(@changes_map[status], dir)).sort
   end
@@ -120,35 +117,29 @@ class Updater
 end
 
 class UpdateFormulary < Updater
-  REPOSITORY_URL = "https://github.com/etehtsea/formulary.git"
-  FORMULA_DIR = "Formula/"
-
   def initialize
-    super
+    @settings = {
+      :title      => 'Formulary',
+      :repo_url   => 'https://github.com/etehtsea/formulary.git',
+      :repo_dir   => FORMULARY_REPOSITORY,
+      :track_dir  => 'Formula/',
+      :title_type => 'formulae'
+    }
 
-    report("Formulary", FORMULARY_REPOSITORY, REPOSITORY_URL) do
-      installed = HOMEBREW_CELLAR.children.
-        select { |pn| pn.directory? }.
-        map    { |pn| pn.basename.to_s }.sort if HOMEBREW_CELLAR.directory?
-      @sections = {
-        "New formulae"     => [changed_items('A', FORMULA_DIR)],
-        "Removed formulae" => [changed_items('D', FORMULA_DIR), installed],
-        "Updated formulae" => [changed_items('M', FORMULA_DIR), installed] }
-    end
+    super
   end
 end
 
 class UpdateBrew < Updater
-  REPOSITORY_URL = "https://github.com/etehtsea/homebrew.git"
-  CMD_DIR = 'Library/Homebrew/cmd'
-
   def initialize
-    super
+    @settings = {
+      :title      => 'Homebrew',
+      :repo_url   => 'https://github.com/etehtsea/homebrew.git',
+      :repo_dir   => HOMEBREW_REPOSITORY,
+      :track_dir  => 'Library/Homebrew/cmd',
+      :title_type => 'commands'
+    }
 
-    report("Homebrew", HOMEBREW_REPOSITORY, REPOSITORY_URL) do
-      @sections = {
-        "New commands"     => [changed_items('A', CMD_DIR)],
-        "Removed commands" => [changed_items('D', CMD_DIR)] }
-    end
+    super
   end
 end

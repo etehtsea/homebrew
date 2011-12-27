@@ -140,21 +140,15 @@ end
 
 class UpdateBrew < Updater
   REPOSITORY_URL = "https://github.com/etehtsea/homebrew.git"
-  EXAMPLE_DIR = 'Library/Contributions/examples/'
   CMD_DIR = 'Library/Homebrew/cmd'
 
   def initialize
     super
 
-    # external commands aren't generally documented but the distinction
-    # is loose. They are less "supported" and more "playful".
-
     report("Homebrew", HOMEBREW_REPOSITORY, REPOSITORY_URL) do
       @sections = {
-        "New commands"              => [changed_items('A', CMD_DIR)],
-        "Removed commands"          => [changed_items('D', CMD_DIR)],
-        "New external commands"     => [changed_items('A', EXAMPLE_DIR)],
-        "Removed external commands" => [changed_items('D', EXAMPLE_DIR)] }
+        "New commands"     => [changed_items('A', CMD_DIR)],
+        "Removed commands" => [changed_items('D', CMD_DIR)] }
     end
   end
 end

@@ -13,7 +13,9 @@ Fork's TODO-List:
       repository will be easy to update them and core separately.
   *   *Split-up core and cmd app*. Library should provide
       an API that could be used by other application (GUI, for example);
-  *   *Extract 'Contributions' to 'homebrew-contrib' repo* (?);
+  *   <del>*Extract 'Contributions' to 'homebrew-contrib' repo*.</del>
+      'Contributions' is now available through the `brew install
+      homebrew-contrib`;
 2. *3rd party formulas repos support* (?);
 3. *GUI application*; (?)
 4. *MacRuby support*; (?)

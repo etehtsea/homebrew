@@ -6,7 +6,7 @@ ARGV.extend(HomebrewArgvExtension)
 require 'test/testball'
 require 'utils'
 
-class AbstractDownloadStrategy
+class DownloadStrategy::Abstract
   attr_reader :url
 end
 
@@ -25,7 +25,6 @@ end
 
 
 class FormulaTests < Test::Unit::TestCase
-
   def test_prefix
     nostdout do
       TestBall.new.brew do |f|
@@ -48,7 +47,7 @@ class FormulaTests < Test::Unit::TestCase
   end
 
   def test_abstract_formula
-    f=MostlyAbstractFormula.new
+    f = MostlyAbstractFormula.new
     assert_equal '__UNKNOWN__', f.name
     assert_raises(RuntimeError) { f.prefix }
     nostdout { assert_raises(RuntimeError) { f.brew } }

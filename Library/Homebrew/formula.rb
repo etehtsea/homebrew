@@ -6,14 +6,14 @@ class SoftwareSpecification
   attr_reader :url, :specs, :using
 
   VCS_SYMBOLS = {
-    :bzr     => BazaarDownloadStrategy,
-    :curl    => CurlDownloadStrategy,
-    :cvs     => CVSDownloadStrategy,
-    :git     => GitDownloadStrategy,
-    :hg      => MercurialDownloadStrategy,
-    :nounzip => NoUnzipCurlDownloadStrategy,
-    :post    => CurlPostDownloadStrategy,
-    :svn     => SubversionDownloadStrategy,
+    :bzr     => DownloadStrategy::Bazaar,
+    :curl    => DownloadStrategy::Curl,
+    :cvs     => DownloadStrategy::CVS,
+    :git     => DownloadStrategy::Git,
+    :hg      => DownloadStrategy::Mercurial,
+    :nounzip => DownloadStrategy::NoUnzipCurl,
+    :post    => DownloadStrategy::CurlPost,
+    :svn     => DownloadStrategy::Subversion,
   }
 
   def initialize url, specs=nil
@@ -30,7 +30,7 @@ class SoftwareSpecification
   # Returns a suitable DownloadStrategy class that can be
   # used to retreive this software package.
   def download_strategy
-    return detect_download_strategy(@url) if @using.nil?
+    return DownloadStrategy.detect(@url) if @using.nil?
 
     # If a class is passed, assume it is a download strategy
     return @using if @using.kind_of? Class
@@ -139,7 +139,7 @@ class Formula
 
     CHECKSUM_TYPES.each { |type| set_instance_variable type }
 
-    @downloader=download_strategy.new @spec_to_use.url, name, version, @spec_to_use.specs
+    @downloader = download_strategy.new @spec_to_use.url, name, version, @spec_to_use.specs
   end
 
   # if the dir is there, but it's empty we consider it not installed
@@ -580,7 +580,7 @@ private
 
     begin
       fetched = downloader.fetch
-    rescue CurlDownloadStrategyError => e
+    rescue DownloadStrategy::CurlError => e
       raise e if mirror_list.empty?
       puts "Trying a mirror..."
       url, specs = mirror_list.shift.values_at :url, :specs

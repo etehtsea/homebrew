@@ -188,7 +188,7 @@ class FormulaInstaller
 
   def pour
     HOMEBREW_CACHE.mkpath
-    downloader = CurlBottleDownloadStrategy.new f.bottle, f.name, f.version, nil
+    downloader = DownloadStrategy::CurlBottle.new f.bottle, f.name, f.version, nil
     downloader.fetch
     f.verify_download_integrity downloader.tarball_path, f.bottle_sha1, "SHA1"
     HOMEBREW_CELLAR.cd do

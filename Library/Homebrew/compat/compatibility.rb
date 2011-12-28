@@ -78,5 +78,4 @@ class Formula
   end
 end
 
-class UnidentifiedFormula < Formula
-end
+class UnidentifiedFormula < Formula; end

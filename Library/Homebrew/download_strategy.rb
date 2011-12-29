@@ -583,24 +583,18 @@ module DownloadStrategy
     end
   end
 
-  # Deprecated stuff. Will be deleted someday (Ugly, but works)
-  def self.deprecate(klass)
-    warn <<-EOS
-[DEPRECATION] `#{klass.class}` is deprecated. \
-Please use `#{klass.class.superclass}` instead.
-    EOS
-  end
-
-  ['Abstract', 'Curl', 'CurlApacheMirror', 'CurlPost', 'NoUnzipCurl',
-  'GzipOnly', 'CurlUnsafe', 'CurlBottle', 'Subversion', 'StrictSubversion',
-  'UnsafeSubversion', 'Git', 'CVS', 'Mercurial', 'Bazaar', 'Fossil'].each do |klass|
-    eval <<-EOS
-    class ::#{klass}DownloadStrategy < DownloadStrategy::#{klass}
-      def initialize(url, name, version, specs)
-        DownloadStrategy.deprecate(self)
+  # Deprecated stuff. Will be deleted someday
+  constants.each do |klass|
+    new_klass = const_get(klass)
+    deprecated_klass = Object.const_set("#{klass}DownloadStrategy", Class.new(new_klass))
+    deprecated_klass.class_eval do
+      define_method(:initialize) do |url, name, version, specs|
+        warn <<-EOS
+[DEPRECATION] `#{deprecated_klass}` is deprecated. \
+Please use `#{new_klass}` instead.
+        EOS
         super
       end
     end
-    EOS
   end
 end

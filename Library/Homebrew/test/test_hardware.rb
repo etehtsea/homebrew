@@ -18,4 +18,9 @@ class HardwareTests < Test::Unit::TestCase
       assert [:core, :core2, :penryn, :nehalem, :sandybridge].include?(Hardware.intel_family)
     end
   end
+
+  def test_cores_as_word
+    Hardware.instance_eval { @processor_count = 'invalid' }
+    assert Hardware.cores_as_words == Hardware.processor_count
+  end
 end

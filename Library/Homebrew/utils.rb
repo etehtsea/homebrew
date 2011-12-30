@@ -111,19 +111,8 @@ def curl *args
   safe_system curl, *args
 end
 
-def puts_columns items, star_items=[]
+def puts_columns items
   return if items.empty?
-
-  if star_items.empty?
-    # get installed formulas list
-    star_items = HOMEBREW_CELLAR.children.
-      select { |pn| pn.directory? }.
-      map    { |pn| pn.basename.to_s }.sort if HOMEBREW_CELLAR.directory?
-  end
-
-  if star_items.any?
-    items.map!{ |item| star_items.include?(item) ? "#{item}*" : item }
-  end
 
   if $stdout.tty?
     # determine the best width to display for different console sizes

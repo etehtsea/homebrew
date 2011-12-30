@@ -77,9 +77,19 @@ class Updater
     if revisions
       puts "Updated #{@settings[:title]} from #{revisions.first[0,8]} to #{revisions.last[0,8]}."
 
+      # get installed formulas list
+      installed = HOMEBREW_CELLAR.children.
+        select { |pn| pn.directory? }.
+        map    { |pn| pn.basename.to_s }.sort if HOMEBREW_CELLAR.directory?
+
       @changes.each do |type, changes|
         unless changes.empty?
           ohai("#{type} #{@settings[:title_type]}")
+
+          if installed.any?
+            changes.map! { |item| installed.include?(item) ? "#{item}*" : item }
+          end
+
           puts_columns changes
         end
       end

@@ -183,13 +183,7 @@ class Pathname
   end
 
   def incremental_hash(hasher)
-    incr_hash = hasher.new
-    self.open('r') do |f|
-      while(buf = f.read(1024))
-        incr_hash << buf
-      end
-    end
-    incr_hash.hexdigest
+    hasher.file(self).hexdigest
   end
 
   def md5

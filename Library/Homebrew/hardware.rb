@@ -26,7 +26,7 @@ module Hardware
 
     def cores_as_words
       quantity = { 1 => 'single', 2 => 'dual' , 4 => 'quad' }
-      @cores_as_words ||= quantity[processor_count] || processor_count
+      @cores_as_words ||= quantity[processor_count] || processor_count.to_s
     end
 
     def is_32_bit?
@@ -41,7 +41,7 @@ module Hardware
       is_64_bit? ? 64 : 32
     end
 
-    protected
+    private
     def sysctl_value(variable)
       `/usr/sbin/sysctl -n #{variable}`.to_i
     end

@@ -5,6 +5,8 @@ ARGV.extend(HomebrewArgvExtension)
 require 'hardware'
 
 describe Hardware do
+  its(:processor_count) { should == Hardware.send(:sysctl_value, 'hw.ncpu') }
+
   context :cpu_type do
     subject { Hardware.cpu_type }
 
@@ -43,14 +45,12 @@ describe Hardware do
     end
   end if Hardware.cpu_type == :intel
 
-  its(:processor_count) { should == Hardware.send(:sysctl_value, 'hw.ncpu') }
-
   context :cores_as_words do
     subject { Hardware.cores_as_words }
 
     it { should be_a String }
 
-    { 1 => 'single', 2 => 'dual', 4 => 'quad' }.each do |k, v|
+    { 1 => 'single', 2 => 'dual', 4 => 'quad', 6 => '6' }.each do |k, v|
       specify do
         Hardware.clone.tap do |o|
           o.instance_eval do

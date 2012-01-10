@@ -203,7 +203,7 @@ def inreplace path, before=nil, after=nil
     s = f.read
 
     if before == nil and after == nil
-      s.extend(StringInreplaceExtension)
+      s.extend(String::Inreplace)
       yield s
     else
       s.gsub!(before, after)

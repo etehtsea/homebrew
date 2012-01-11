@@ -83,6 +83,32 @@ module Homebrew
   end
 end
 
+module MakefileInreplace
+  # Looks for Makefile style variable defintions and replaces the
+  # value with "new_value", or removes the definition entirely.
+  def change_var!(flag, new_value)
+    new_value = "#{flag}=#{new_value}"
+    gsub! Regexp.new("^#{flag}[ \\t]*=[ \\t]*(.*)$"), new_value
+  end
+
+  # Removes variable assignments completely.
+  def remove_var!(flags)
+    # Next line is for Ruby 1.9.x compatibility
+    flags = [flags] unless flags.kind_of? Array
+    flags.each do |flag|
+      # Also remove trailing \n, if present.
+      gsub! Regexp.new("^#{flag}[ \\t]*=(.*)$\n?"), ""
+    end
+  end
+
+  # Finds the specified variable
+  def get_var(flag)
+    m = match Regexp.new("^#{flag}[ \\t]*=[ \\t]*(.*)$")
+
+    m ? m[1] : nil
+  end
+end
+
 # Kernel.system but with exceptions
 def safe_system cmd, *args
   unless Homebrew.system cmd, *args
@@ -203,7 +229,7 @@ def inreplace path, before=nil, after=nil
     s = f.read
 
     if before == nil and after == nil
-      s.extend(String::Inreplace)
+      s.extend(MakefileInreplace)
       yield s
     else
       s.gsub!(before, after)

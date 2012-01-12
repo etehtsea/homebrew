@@ -9,7 +9,7 @@ class String
 
   unless method_defined?(:start_with?)
     def start_with? prefix
-      prefix = prefix.to_s
+      return false unless prefix.is_a?(String)
       self[0, prefix.length] == prefix
     end
   end

@@ -447,14 +447,14 @@ module GitHub extend self
 
   def find_pull_requests rx
     require 'open-uri'
-    require 'vendor/multi_json'
+    require 'vendor/ok_json'
 
     pulls = []
     uri = URI.parse("https://api.github.com/repos/mxcl/homebrew/pulls")
     uri.query = "per_page=100"
 
     open uri do |f|
-      MultiJson.decode((f.read)).each do |pull|
+      OkJson.decode(f.read).each do |pull|
         pulls << pull['html_url'] if rx.match pull['title']
       end
 

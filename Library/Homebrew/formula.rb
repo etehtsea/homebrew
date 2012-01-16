@@ -570,14 +570,6 @@ private
     end
   end
 
-  def digest(fn, type)
-    require 'digest'
-
-    type = type.to_s.upcase
-    type = 'SHA2' if type == 'SHA256'
-    Digest.const_get(type).file(fn).hexdigest
-  end
-
   CHECKSUM_TYPES=[:md5, :sha1, :sha256].freeze
 
   public
@@ -611,14 +603,18 @@ private
 
   # For FormulaInstaller.
   def verify_download_integrity fn, *args
+    require 'digest'
     if args.length != 2
       type = checksum_type || :md5
       supplied = instance_variable_get("@#{type}")
+      # Convert symbol to readable string
+      type = type.to_s.upcase
     else
       supplied, type = args
     end
 
-    hash = digest(fn, type)
+    hasher = Digest.const_get(type)
+    hash = fn.incremental_hash(hasher)
 
     if supplied and not supplied.empty?
       message = <<-EOF

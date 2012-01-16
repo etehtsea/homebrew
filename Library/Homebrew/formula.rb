@@ -137,7 +137,7 @@ class Formula
     @version ||= @spec_to_use.detect_version
     validate_variable :version if @version
 
-    CHECKSUM_TYPES.each { |type| set_instance_variable type }
+    Pathname::Checksum::TYPES.each { |type| set_instance_variable type }
 
     @downloader = download_strategy.new @spec_to_use.url, name, version, @spec_to_use.specs
   end
@@ -570,8 +570,6 @@ private
     end
   end
 
-  CHECKSUM_TYPES=[:md5, :sha1, :sha256].freeze
-
   public
   # For brew-fetch and others.
   def fetch
@@ -598,23 +596,19 @@ private
 
   # Detect which type of checksum is being used, or nil if none
   def checksum_type
-    CHECKSUM_TYPES.detect { |type| instance_variable_defined?("@#{type}") }
+    Pathname::Checksum::TYPES.detect { |type| instance_variable_defined?("@#{type}") }
   end
 
   # For FormulaInstaller.
   def verify_download_integrity fn, *args
-    require 'digest'
     if args.length != 2
       type = checksum_type || :md5
       supplied = instance_variable_get("@#{type}")
-      # Convert symbol to readable string
-      type = type.to_s.upcase
     else
       supplied, type = args
     end
 
-    hasher = Digest.const_get(type)
-    hash = fn.incremental_hash(hasher)
+    hash = fn.send(type)
 
     if supplied and not supplied.empty?
       message = <<-EOF
@@ -741,7 +735,7 @@ EOF
     attr_rw :version, :homepage, :mirrors, :specs, :deps, :external_deps
     attr_rw :keg_only_reason, :fails_with_llvm_reason, :skip_clean_all
     attr_rw :bottle, :bottle_sha1
-    attr_rw(*CHECKSUM_TYPES)
+    attr_rw(*Pathname::Checksum::TYPES)
 
     def head val=nil, specs=nil
       return @head if val.nil?

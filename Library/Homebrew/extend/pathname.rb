@@ -181,24 +181,18 @@ class Pathname
     nil
   end
 
-  def incremental_hash(hasher)
-    hasher.file(self).hexdigest
+  module Checksum
+    require 'digest'
+    TYPES = [:md5, :sha1, :sha256].freeze
+
+    TYPES.each do |type|
+      define_method(type) do
+        Digest.const_get(type.to_s.upcase).file(self).hexdigest
+      end
+    end
   end
 
-  def md5
-    require 'digest/md5'
-    incremental_hash(Digest::MD5)
-  end
-
-  def sha1
-    require 'digest/sha1'
-    incremental_hash(Digest::SHA1)
-  end
-
-  def sha2
-    require 'digest/sha2'
-    incremental_hash(Digest::SHA2)
-  end
+  include Checksum
 
   if '1.9' <= RUBY_VERSION
     alias_method :to_str, :to_s

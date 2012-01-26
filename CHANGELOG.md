@@ -27,7 +27,7 @@
 
 *  Formulas were extracted to own repository
 
-*  OkJson patched to accept symbols
+*  `OkJson` patched to accept symbols
 
-*  MultiJson replaced with OkJson (vendored MultiJson was hardwired to
+*  `MultiJson` replaced with `OkJson` (vendored `MultiJson` was hardwired to
    it anyway)

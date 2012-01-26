@@ -1,3 +1,8 @@
+unless ARGV.include? "--no-compat" or ENV['HOMEBREW_NO_COMPAT']
+  $:.unshift(File.expand_path("#{__FILE__}/../compat"))
+  require 'compatibility'
+end
+
 require 'extend/pathname'
 require 'extend/ARGV'
 require 'extend/string'
@@ -59,8 +64,3 @@ end
 
 FORMULA_META_FILES = %w[README README.md ChangeLog CHANGES COPYING LICENSE LICENCE COPYRIGHT AUTHORS]
 ISSUES_URL = "https://github.com/mxcl/homebrew/wiki/checklist-before-filing-a-new-issue"
-
-unless ARGV.include? "--no-compat" or ENV['HOMEBREW_NO_COMPAT']
-  $:.unshift(File.expand_path("#{__FILE__}/../compat"))
-  require 'compatibility'
-end

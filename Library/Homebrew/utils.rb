@@ -84,6 +84,8 @@ module Homebrew
 end
 
 module MakefileInreplace
+  extend ::Deprecation
+
   # Looks for Makefile style variable defintions and replaces the
   # value with "new_value", or removes the definition entirely.
   def change_var!(flag, new_value)
@@ -107,6 +109,10 @@ module MakefileInreplace
 
     m ? m[1] : nil
   end
+
+  deprecate :change_make_var!, :change_var!
+  deprecate :remove_make_var!, :remove_var!
+  deprecate :get_make_var!, :get_var!
 end
 
 # Kernel.system but with exceptions

@@ -589,10 +589,11 @@ module DownloadStrategy
     deprecated_klass = Object.const_set("#{klass}DownloadStrategy", Class.new(new_klass))
     deprecated_klass.class_eval do
       define_method(:initialize) do |url, name, version, specs|
-        warn <<-EOS
-[DEPRECATION] `#{deprecated_klass}` is deprecated. \
-Please use `#{new_klass}` instead.
+        warn <<-EOS.undent
+        [DEPRECATION] `#{deprecated_klass}` is deprecated. \
+        Please use `#{new_klass}` instead.
         EOS
+
         super
       end
     end

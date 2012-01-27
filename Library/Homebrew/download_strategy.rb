@@ -590,7 +590,7 @@ module DownloadStrategy
     deprecated_klass.class_eval do
       define_method(:initialize) do |url, name, version, specs|
         warn <<-EOS.undent
-        [DEPRECATION] `#{deprecated_klass}` is deprecated. \
+        [DEPRECATION] `#{deprecated_klass}` is deprecated.
         Please use `#{new_klass}` instead.
         EOS
 

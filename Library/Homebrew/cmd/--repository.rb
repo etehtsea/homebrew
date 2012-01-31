@@ -1,5 +1,5 @@
 module Homebrew extend self
   def __repository
-    puts HOMEBREW_REPOSITORY
+    puts Homebrew.repository
   end
 end

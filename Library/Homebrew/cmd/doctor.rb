@@ -187,7 +187,7 @@ def check_gcc_versions
       NOTE: Versions of XCode newer than 4.2 don't include gcc 4.2.x.
 
     EOS
-  elsif gcc_42 < RECOMMENDED_GCC_42
+  elsif gcc_42 < Homebrew.recommended_gcc_42
     puts <<-EOS.undent
       Your gcc 4.2.x version is older than the recommended version. It may be advisable
       to upgrade to the latest release of Xcode.
@@ -207,7 +207,7 @@ def check_gcc_versions
         We couldn't detect gcc 4.0.x. Some formulae require this compiler.
 
       EOS
-    elsif gcc_40 < RECOMMENDED_GCC_40
+    elsif gcc_40 < Homebrew.recommended_gcc_40
       puts <<-EOS.undent
         Your gcc 4.0.x version is older than the recommended version. It may be advisable
         to upgrade to the latest release of Xcode.
@@ -225,7 +225,7 @@ def check_gcc_versions
 end
 
 def __check_subdir_access base
-  target = HOMEBREW_PREFIX+base
+  target = Homebrew.prefix+base
   return unless target.exist?
 
   cant_read = []
@@ -259,7 +259,7 @@ def check_access_share_man
 end
 
 def __check_folder_access base, msg
-  folder = HOMEBREW_PREFIX+base
+  folder = Homebrew.prefix+base
   return unless folder.exist?
 
   unless folder.writable?
@@ -312,7 +312,7 @@ def check_usr_bin_ruby
 end
 
 def check_homebrew_prefix
-  unless HOMEBREW_PREFIX.to_s == '/usr/local'
+  unless Homebrew.prefix.to_s == '/usr/local'
     puts <<-EOS.undent
       You can install Homebrew anywhere you want, but some brews may only build
       correctly if you install to /usr/local.
@@ -344,21 +344,21 @@ def check_user_path
       unless seen_prefix_bin
         # only show the doctor message if there are any conflicts
         # rationale: a default install should not trigger any brew doctor messages
-        if Dir["#{HOMEBREW_PREFIX}/bin/*"].any? {|fn| File.exist? "/usr/bin/#{File.basename fn}"}
-          ohai "/usr/bin occurs before #{HOMEBREW_PREFIX}/bin"
+        if Dir["#{Homebrew.prefix}/bin/*"].any? {|fn| File.exist? "/usr/bin/#{File.basename fn}"}
+          ohai "/usr/bin occurs before #{Homebrew.prefix}/bin"
           puts <<-EOS.undent
             This means that system-provided programs will be used instead of those
             provided by Homebrew. This is an issue if you eg. brew installed Python.
 
             Consider editing your .bashrc to put:
-              #{HOMEBREW_PREFIX}/bin
+              #{Homebrew.prefix}/bin
             ahead of /usr/bin in your PATH.
           EOS
         end
       end
-    when "#{HOMEBREW_PREFIX}/bin"
+    when "#{Homebrew.prefix}/bin"
       seen_prefix_bin = true
-    when "#{HOMEBREW_PREFIX}/sbin"
+    when "#{Homebrew.prefix}/sbin"
       seen_prefix_sbin = true
     end
   end
@@ -369,14 +369,14 @@ def check_user_path
       on other brews that install tools to bin.
 
       You should edit your .bashrc to add:
-        #{HOMEBREW_PREFIX}/bin
+        #{Homebrew.prefix}/bin
       to the PATH variable.
 
       EOS
   end
 
   # Don't complain about sbin not being in the path if it doesn't exist
-  sbin = (HOMEBREW_PREFIX+'sbin')
+  sbin = (Homebrew.prefix+'sbin')
   if sbin.directory? and sbin.children.length > 0
     unless seen_prefix_sbin
       puts <<-EOS.undent
@@ -384,7 +384,7 @@ def check_user_path
         sbin was not found in your path.
 
         Consider editing your .bashrc to add:
-          #{HOMEBREW_PREFIX}/sbin
+          #{Homebrew.prefix}/sbin
         to the PATH variable.
 
         EOS
@@ -396,7 +396,7 @@ def check_which_pkg_config
   binary = `/usr/bin/which pkg-config`.chomp
   return if binary.empty?
 
-  unless binary == "#{HOMEBREW_PREFIX}/bin/pkg-config"
+  unless binary == "#{Homebrew.prefix}/bin/pkg-config"
     puts <<-EOS.undent
       You have a non-brew 'pkg-config' in your PATH:
         #{binary}
@@ -439,7 +439,7 @@ end
 def check_for_gettext
   if %w[lib/libgettextlib.dylib
         lib/libintl.dylib
-        include/libintl.h ].any? { |f| File.exist? "#{HOMEBREW_PREFIX}/#{f}" }
+        include/libintl.h ].any? { |f| File.exist? "#{Homebrew.prefix}/#{f}" }
     puts <<-EOS.undent
       gettext was detected in your PREFIX.
 
@@ -459,7 +459,7 @@ end
 
 def check_for_iconv
   if %w[lib/libiconv.dylib
-        include/iconv.h ].any? { |f| File.exist? "#{HOMEBREW_PREFIX}/#{f}" }
+        include/iconv.h ].any? { |f| File.exist? "#{Homebrew.prefix}/#{f}" }
     puts <<-EOS.undent
       libiconv was detected in your PREFIX.
 
@@ -475,13 +475,13 @@ def check_for_iconv
 end
 
 def check_for_config_scripts
-  real_cellar = HOMEBREW_CELLAR.exist? && HOMEBREW_CELLAR.realpath
+  real_cellar = Homebrew.cellar.exist? && Homebrew.cellar.realpath
 
   config_scripts = []
 
   path_folders.each do |p|
-    next if ['/usr/bin', '/usr/sbin', '/usr/X11/bin', '/usr/X11R6/bin', "#{HOMEBREW_PREFIX}/bin", "#{HOMEBREW_PREFIX}/sbin"].include? p
-    next if p =~ %r[^(#{real_cellar.to_s}|#{HOMEBREW_CELLAR.to_s})] if real_cellar
+    next if ['/usr/bin', '/usr/sbin', '/usr/X11/bin', '/usr/X11R6/bin', "#{Homebrew.prefix}/bin", "#{Homebrew.prefix}/sbin"].include? p
+    next if p =~ %r[^(#{real_cellar.to_s}|#{Homebrew.cellar.to_s})] if real_cellar
 
     configs = Dir["#{p}/*-config"]
     # puts "#{p}\n    #{configs * ' '}" unless configs.empty?
@@ -519,14 +519,14 @@ def check_for_dyld_vars
 end
 
 def check_for_symlinked_cellar
-  if HOMEBREW_CELLAR.symlink?
+  if Homebrew.cellar.symlink?
     puts <<-EOS.undent
       Symlinked Cellars can cause problems.
-      Your Homebrew Cellar is a symlink: #{HOMEBREW_CELLAR}
-                      which resolves to: #{HOMEBREW_CELLAR.realpath}
+      Your Homebrew Cellar is a symlink: #{Homebrew.cellar}
+                      which resolves to: #{Homebrew.cellar.realpath}
 
       The recommended Homebrew installations are either:
-      (A) Have Cellar be a real folder inside of your HOMEBREW_PREFIX
+      (A) Have Cellar be a real folder inside of your Homebrew.prefix
       (B) Symlink "bin/brew" into your prefix, but don't symlink "Cellar".
 
       Older installations of Homebrew may have created a symlinked Cellar, but this can
@@ -538,11 +538,11 @@ def check_for_symlinked_cellar
 end
 
 def check_for_multiple_volumes
-  return unless HOMEBREW_CELLAR.exist?
+  return unless Homebrew.cellar.exist?
   volumes = Volumes.new
 
-  # Find the volumes for the TMP folder & HOMEBREW_CELLAR
-  real_cellar = HOMEBREW_CELLAR.realpath
+  # Find the volumes for the TMP folder & Homebrew.cellar
+  real_cellar = Homebrew.cellar.realpath
 
   tmp_prefix = ENV['HOMEBREW_TEMP'] || '/tmp'
   tmp = Pathname.new `/usr/bin/mktemp -d #{tmp_prefix}/homebrew-brew-doctor-XXXX`.strip
@@ -623,7 +623,7 @@ def __check_linked_brew f
   links_found = []
 
   Pathname.new(f.prefix).find do |src|
-    dst=HOMEBREW_PREFIX+src.relative_path_from(f.prefix)
+    dst=Homebrew.prefix+src.relative_path_from(f.prefix)
     next unless dst.symlink?
 
     dst_points_to = dst.realpath()
@@ -674,11 +674,11 @@ def check_for_MACOSX_DEPLOYMENT_TARGET
   target_var = ENV['MACOSX_DEPLOYMENT_TARGET']
   return if target_var.to_s.empty?
 
-  unless target_var == MACOS_VERSION.to_s
+  unless target_var == MacOS.version.to_s
     puts <<-EOS.undent
     MACOSX_DEPLOYMENT_TARGET was set to #{target_var}
     This is used by Fink, but having it set to a value different from the
-    current system version (#{MACOS_VERSION}) can cause problems, compiling
+    current system version (#{MacOS.version}) can cause problems, compiling
     Git for instance, and should probably be removed.
 
     EOS
@@ -751,12 +751,12 @@ def check_missing_deps
 end
 
 def check_git_status
-  HOMEBREW_REPOSITORY.cd do
+  Homebrew.repository.cd do
     cmd = `git status -s Library/Homebrew/`.chomp
     if system "/usr/bin/which -s git" and File.directory? '.git' and not cmd.empty?
       ohai "You have uncommitted modifications to Homebrew's core."
       puts "Unless you know what you are doing, you should run:"
-      puts "cd "+HOMEBREW_REPOSITORY+" && git reset --hard"
+      puts "cd "+Homebrew.repository+" && git reset --hard"
       puts
     end
   end

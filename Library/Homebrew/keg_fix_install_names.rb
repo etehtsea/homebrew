@@ -31,7 +31,7 @@ class Keg
     install_names.reject!{ |fn| fn[0,1] == '/' }
 
     # the shortpath ensures that library upgrades don’t break installed tools
-    shortpath = HOMEBREW_PREFIX + Pathname.new(dylib).relative_path_from(self)
+    shortpath = Homebrew.prefix + Pathname.new(dylib).relative_path_from(self)
     id = if shortpath.exist? then shortpath else dylib end
 
     yield id, install_names

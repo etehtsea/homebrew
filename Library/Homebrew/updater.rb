@@ -78,9 +78,9 @@ class Updater
       puts "Updated #{@settings[:title]} from #{revisions.first[0,8]} to #{revisions.last[0,8]}."
 
       # get installed formulas list
-      installed = HOMEBREW_CELLAR.children.
+      installed = Homebrew.cellar.children.
         select { |pn| pn.directory? }.
-        map    { |pn| pn.basename.to_s }.sort if HOMEBREW_CELLAR.directory?
+        map    { |pn| pn.basename.to_s }.sort if Homebrew.cellar.directory?
 
       @changes.each do |type, changes|
         unless changes.empty?
@@ -131,7 +131,7 @@ class UpdateFormulary < Updater
     @settings = {
       :title      => 'Formulary',
       :repo_url   => 'https://github.com/etehtsea/formulary.git',
-      :repo_dir   => FORMULARY_REPOSITORY,
+      :repo_dir   => Homebrew.formulary,
       :track_dir  => 'Formula/',
       :title_type => 'formulae'
     }
@@ -145,7 +145,7 @@ class UpdateBrew < Updater
     @settings = {
       :title      => 'Homebrew',
       :repo_url   => 'https://github.com/etehtsea/homebrew.git',
-      :repo_dir   => HOMEBREW_REPOSITORY,
+      :repo_dir   => Homebrew.repository,
       :track_dir  => 'Library/Homebrew/cmd',
       :title_type => 'commands'
     }

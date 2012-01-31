@@ -21,7 +21,7 @@ module Homebrew extend self
       end
     end
 
-    prefix = HOMEBREW_CELLAR+name+version
+    prefix = Homebrew.cellar + name + version
 
     if File.file? 'CMakeLists.txt'
       puts "-DCMAKE_INSTALL_PREFIX=#{prefix}"

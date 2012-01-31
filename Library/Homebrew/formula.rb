@@ -157,12 +157,12 @@ class Formula
   end
 
   def linked_keg
-    keg = Pathname.new(HOMEBREW_REPOSITORY/"Library/LinkedKegs"/@name)
+    keg = Pathname.new(Homebrew.repository/"Library/LinkedKegs"/@name)
     if keg.exist? then Keg.new(keg.realpath) else nil end
   end
 
   def installed_prefix
-    head_prefix = HOMEBREW_CELLAR+@name+'HEAD'
+    head_prefix = Homebrew.cellar + @name + 'HEAD'
     if @version == 'HEAD' || head_prefix.directory?
       head_prefix
     else
@@ -181,7 +181,7 @@ class Formula
   def prefix
     validate_variable :name
     validate_variable :version
-    HOMEBREW_CELLAR+@name+@version
+    Homebrew.cellar + @name + @version
   end
   def rack; prefix.parent end
 
@@ -204,9 +204,9 @@ class Formula
   def share;   prefix+'share'          end
 
   # configuration needs to be preserved past upgrades
-  def etc; HOMEBREW_PREFIX+'etc' end
+  def etc; Homebrew.prefix + 'etc' end
   # generally we don't want var stuff inside the keg
-  def var; HOMEBREW_PREFIX+'var' end
+  def var; Homebrew.prefix + 'var' end
 
   # Use the @spec_to_use to detect the download strategy.
   # Can be overriden to force a custom download strategy
@@ -354,7 +354,7 @@ class Formula
       puts
       puts <<-EOS.undent
         We are continuing anyway so if the build succeeds, please open a ticket with
-        the following information: #{MacOS.llvm_build_version}-#{MACOS_VERSION}. So
+        the following information: #{MacOS.llvm_build_version}-#{MacOS.version}. So
         that we can update the formula accordingly. Thanks!
         EOS
       puts
@@ -375,7 +375,7 @@ class Formula
 
   # an array of all Formula names
   def self.names
-    Dir["#{HOMEBREW_REPOSITORY}/Library/Formula/*.rb"].map{ |f| File.basename f, '.rb' }.sort
+    Dir["#{Homebrew.repository}/Library/Formula/*.rb"].map{ |f| File.basename f, '.rb' }.sort
   end
 
   # an array of all Formula, instantiated
@@ -403,16 +403,16 @@ class Formula
   end
 
   def self.aliases
-    Dir["#{HOMEBREW_REPOSITORY}/Library/Aliases/*"].map{ |f| File.basename f }.sort
+    Dir["#{Homebrew.repository}/Library/Aliases/*"].map{ |f| File.basename f }.sort
   end
 
   def self.canonical_name name
     # Cast pathnames to strings.
     name = name.to_s if name.kind_of? Pathname
 
-    formula_with_that_name = HOMEBREW_REPOSITORY+"Library/Formula/#{name}.rb"
-    possible_alias = HOMEBREW_REPOSITORY+"Library/Aliases/#{name}"
-    possible_cached_formula = HOMEBREW_CACHE_FORMULA+"#{name}.rb"
+    formula_with_that_name = Homebrew.repository + "Library/Formula/#{name}.rb"
+    possible_alias = Homebrew.repository + "Library/Aliases/#{name}"
+    possible_cached_formula = Homebrew.cache_formula + "#{name}.rb"
 
     if name.include? "/"
       # Don't resolve paths or URLs
@@ -436,10 +436,10 @@ class Formula
     if name =~ %r[(https?|ftp)://]
       url = name
       name = Pathname.new(name).basename
-      target_file = HOMEBREW_CACHE_FORMULA+name
+      target_file = Homebrew.cache_formula + name
       name = name.basename(".rb").to_s
 
-      HOMEBREW_CACHE_FORMULA.mkpath
+      Homebrew.cache_formula.mkpath
       FileUtils.rm target_file, :force => true
       curl url, '-o', target_file
 
@@ -479,7 +479,7 @@ class Formula
   end
 
   def self.path name
-    HOMEBREW_REPOSITORY+"Library/Formula/#{name.downcase}.rb"
+    Homebrew.repository + "Library/Formula/#{name.downcase}.rb"
   end
 
   def mirrors
@@ -563,10 +563,10 @@ private
     # /tmp volume to the other volume. So we let the user override the tmp
     # prefix if they need to.
     tmp_prefix = ENV['HOMEBREW_TEMP'] || '/tmp'
-    tmp=Pathname.new `/usr/bin/mktemp -d #{tmp_prefix}/homebrew-#{name}-#{version}-XXXX`.strip
+    tmp = Pathname.new `/usr/bin/mktemp -d #{tmp_prefix}/homebrew-#{name}-#{version}-XXXX`.strip
     raise "Couldn't create build sandbox" if not tmp.directory? or $? != 0
     begin
-      wd=Dir.pwd
+      wd = Dir.pwd
       Dir.chdir tmp
       yield
     ensure
@@ -584,7 +584,7 @@ private
     mirror_list =  @spec_to_use == @standard ? mirrors : []
 
     # Ensure the cache exists
-    HOMEBREW_CACHE.mkpath
+    Homebrew.cache.mkpath
 
     begin
       fetched = downloader.fetch
@@ -616,13 +616,13 @@ private
     hash = fn.send(type)
 
     if supplied and not supplied.empty?
-      message = <<-EOF
-#{type} mismatch
-Expected: #{supplied}
-Got: #{hash}
-Archive: #{fn}
-(To retry an incomplete download, remove the file above.)
-EOF
+      message = <<-EOF.undent
+      #{type} mismatch
+      Expected: #{supplied}
+      Got: #{hash}
+      Archive: #{fn}
+      (To retry an incomplete download, remove the file above.)
+      EOF
       raise message unless supplied.upcase == hash.upcase
     else
       opoo "Cannot verify package integrity"
@@ -652,7 +652,7 @@ EOF
       patch_defns = patches
     end
 
-    patch_list=[]
+    patch_list = []
     n=0
     patch_defns.each do |arg, urls|
       # DATA.each does each line, which doesn't work so great
@@ -663,7 +663,7 @@ EOF
 
         if defined? DATA and url == DATA
           pn = Pathname.new p[:filename]
-          pn.write(DATA.read.to_s.gsub("HOMEBREW_PREFIX", HOMEBREW_PREFIX))
+          pn.write(DATA.read.to_s.gsub("HOMEBREW_PREFIX", Homebrew.prefix))
         elsif url =~ %r[^\w+\://]
           out_fn = p[:filename]
           case url

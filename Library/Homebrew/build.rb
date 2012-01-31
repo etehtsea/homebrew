@@ -22,7 +22,7 @@ at_exit do
     ENV.extend(HomebrewEnvExtension)
     ENV.setup_build_environment
     # we must do this or tools like pkg-config won't get found by configure scripts etc.
-    ENV.prepend 'PATH', "#{HOMEBREW_PREFIX}/bin", ':' unless ORIGINAL_PATHS.include? "#{HOMEBREW_PREFIX}/bin"
+    ENV.prepend 'PATH', "#{Homebrew.prefix}/bin", ':' unless ORIGINAL_PATHS.include? "#{Homebrew.prefix}/bin"
 
     install(Formula.factory($0))
   rescue Exception => e
@@ -72,7 +72,7 @@ def install f
     else
       f.prefix.mkpath
       f.install
-      FORMULA_META_FILES.each do |filename|
+      Homebrew.formula_meta_files.each do |filename|
         next if File.directory? filename
         target_file = filename
         target_file = "#{filename}.txt" if File.exists? "#{filename}.txt"

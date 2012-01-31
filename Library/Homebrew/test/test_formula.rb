@@ -28,7 +28,7 @@ class FormulaTests < Test::Unit::TestCase
   def test_prefix
     nostdout do
       TestBall.new.brew do |f|
-        assert_equal File.expand_path(f.prefix), (HOMEBREW_CELLAR+f.name+'0.1').to_s
+        assert_equal File.expand_path(f.prefix), (Homebrew.cellar+f.name+'0.1').to_s
         assert_kind_of Pathname, f.prefix
       end
     end
@@ -54,7 +54,7 @@ class FormulaTests < Test::Unit::TestCase
   end
 
   def test_mirror_support
-    HOMEBREW_CACHE.mkpath unless HOMEBREW_CACHE.exist?
+    Homebrew.cache.mkpath unless Homebrew.cache.exist?
     f = TestBallWithMirror.new
     tarball, downloader = f.fetch
 

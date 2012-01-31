@@ -1,22 +1,22 @@
 module Homebrew extend self
   def list
     if ARGV.flag? '--unbrewed'
-      dirs = HOMEBREW_PREFIX.children.select{ |pn| pn.directory? }.map{ |pn| pn.basename.to_s }
+      dirs = Homebrew.prefix.children.select{ |pn| pn.directory? }.map{ |pn| pn.basename.to_s }
       dirs -= %w[Library Cellar .git]
-      cd HOMEBREW_PREFIX
+      cd Homebrew.prefix
       exec 'find', *dirs + %w[-type f ( ! -iname .ds_store ! -iname brew ! -iname brew-man.1 ! -iname brew.1 )]
     elsif ARGV.flag? '--versions'
       if ARGV.named.empty?
-        HOMEBREW_CELLAR.children.select{ |pn| pn.directory? }
+        Homebrew.cellar.children.select{ |pn| pn.directory? }
       else
-        ARGV.named.map{ |n| HOMEBREW_CELLAR+n }.select{ |pn| pn.exist? }
+        ARGV.named.map{ |n| Homebrew.cellar+n }.select{ |pn| pn.exist? }
       end.each do |d|
         versions = d.children.select{ |pn| pn.directory? }.map{ |pn| pn.basename.to_s }
         puts "#{d.basename} #{versions*' '}"
       end
     elsif ARGV.named.empty?
       ENV['CLICOLOR'] = nil
-      exec 'ls', *ARGV.options_only << HOMEBREW_CELLAR if HOMEBREW_CELLAR.exist?
+      exec 'ls', *ARGV.options_only << Homebrew.cellar if Homebrew.cellar.exist?
     elsif ARGV.verbose? or not $stdout.tty?
       exec "find", *ARGV.kegs + %w[-not -type d -print]
     else
@@ -43,7 +43,7 @@ class PrettyListing
           else
             print_dir pn
           end
-        elsif not (FORMULA_META_FILES + %w[.DS_Store INSTALL_RECEIPT.json]).include? pn.basename.to_s
+        elsif not (Homebrew.formula_meta_files + %w[.DS_Store INSTALL_RECEIPT.json]).include? pn.basename.to_s
           puts pn
         end
       end

@@ -11,7 +11,7 @@ module Homebrew extend self
           puts '---'
         end
       else
-        puts "#{HOMEBREW_CELLAR.children.length} kegs, #{HOMEBREW_CELLAR.abv}"
+        puts "#{Homebrew.cellar.children.length} kegs, #{Homebrew.cellar.abv}"
       end
     elsif valid_url ARGV[0]
       info_formula Formula.factory(ARGV.shift)
@@ -27,7 +27,7 @@ module Homebrew extend self
 
     if system "/usr/bin/which -s git"
       gh_user=`git config --global github.user 2>/dev/null`.chomp
-      /^\*\s*(.*)/.match(`git --git-dir=#{HOMEBREW_REPOSITORY}/.git branch 2>/dev/null`)
+      /^\*\s*(.*)/.match(`git --git-dir=#{Homebrew.repository}/.git branch 2>/dev/null`)
       unless $1.nil? || $1.empty? || $1.chomp == 'master' || gh_user.empty?
         branch = $1.chomp
         user = gh_user
@@ -80,7 +80,7 @@ module Homebrew extend self
 
   rescue FormulaUnavailableError
     # check for DIY installation
-    d = HOMEBREW_PREFIX+name
+    d = Homebrew.prefix + name
     if d.directory?
       ohai "DIY Installation"
       d.children.each{ |keg| puts "#{keg} (#{keg.abv})" }

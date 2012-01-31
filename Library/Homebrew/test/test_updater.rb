@@ -1,7 +1,7 @@
 abort if ARGV.include? "--skip-update"
 
 require 'testing_env'
-HOMEBREW_CELLAR.mkpath
+Homebrew.cellar.mkpath
 
 require 'extend/ARGV' # needs to be after test/unit to avoid conflict with OptionsParser
 ARGV.extend(HomebrewArgvExtension)
@@ -24,12 +24,12 @@ class RefreshBrewMock < RefreshBrew
   end
 
   def `(cmd)
-    if Dir.pwd == HOMEBREW_PREFIX.to_s and @expected.include?(cmd) and !@outputs[cmd].empty?
+    if Dir.pwd == Homebrew.prefix.to_s and @expected.include?(cmd) and !@outputs[cmd].empty?
       @called ||= []
       @called << cmd
       @outputs[cmd].shift
     else
-      raise "#{inspect} Unexpectedly called backticks in pwd `#{HOMEBREW_PREFIX}' and command `#{cmd}'"
+      raise "#{inspect} Unexpectedly called backticks in pwd `#{Homebrew.prefix}' and command `#{cmd}'"
     end
   end
 

@@ -5,56 +5,29 @@ module Homebrew extend self
     puts config_s
   end
 
-  def llvm
-    @llvm ||= MacOS.llvm_build_version
-  end
-
-  def gcc_42
-    @gcc_42 ||= MacOS.gcc_42_build_version
-  end
-
-  def gcc_40
-    @gcc_40 ||= MacOS.gcc_40_build_version
-  end
-
-  def clang
-    @clang ||= MacOS.clang_version
-  end
-
-  def clang_build
-    @clang_build ||= MacOS.clang_build_version
-  end
-
-  def xcode_version
-    @xcode_version || MacOS.xcode_version
-  end
-
   def sha
-    sha = HOMEBREW_REPOSITORY.cd do
+    sha = Homebrew.repository.cd do
       `git rev-parse --verify -q HEAD 2>/dev/null`.chomp
     end
-    if sha.empty? then "(none)" else sha end
-  end
 
-  def system_ruby
-    Pathname.new('/usr/bin/ruby').realpath.to_s
+    sha.empty? ? "(none)" : sha
   end
 
   def config_s; <<-EOS.undent
-    HOMEBREW_VERSION: #{HOMEBREW_VERSION}
+    HOMEBREW_VERSION: #{Homebrew.version}
     HEAD: #{sha}
-    HOMEBREW_PREFIX: #{HOMEBREW_PREFIX}
-    HOMEBREW_CELLAR: #{HOMEBREW_CELLAR}
+    HOMEBREW_PREFIX: #{Homebrew.prefix}
+    HOMEBREW_CELLAR: #{Homebrew.cellar}
     Hardware: #{Hardware.cores_as_words}-core #{Hardware.bits}-bit #{Hardware.intel_family}
-    OS X: #{MACOS_FULL_VERSION}
+    OS X: #{MacOS.full_version}
     Kernel Architecture: #{`uname -m`.chomp}
     Ruby: #{RUBY_VERSION}-#{RUBY_PATCHLEVEL}
-    /usr/bin/ruby => #{system_ruby}
-    Xcode: #{xcode_version}
-    GCC-4.0: #{gcc_40 ? "build #{gcc_40}" : "N/A"}
-    GCC-4.2: #{gcc_42 ? "build #{gcc_42}" : "N/A"}
-    LLVM: #{llvm ? "build #{llvm}" : "N/A"}
-    Clang: #{clang ? "#{clang} build #{clang_build}" : "N/A"}
+    /usr/bin/ruby => #{Pathname.new('/usr/bin/ruby').realpath.to_s}
+    Xcode: #{MacOS.xcode_version}
+    GCC-4.0: #{MacOS.gcc_40_build_version ? "build #{MacOS.gcc_40_build_version}" : "N/A"}
+    GCC-4.2: #{MacOS.gcc_42_build_version ? "build #{MacOS.gcc_42_build_version}" : "N/A"}
+    LLVM: #{MacOS.llvm_build_version ? "build #{MacOS.llvm_build_version}" : "N/A"}
+    Clang: #{MacOS.clang_version ? "#{MacOS.clang_version} build #{MacOS.clang_build_version}" : "N/A"}
     MacPorts or Fink? #{macports_or_fink_installed?}
     X11 installed? #{x11_installed?}
     EOS

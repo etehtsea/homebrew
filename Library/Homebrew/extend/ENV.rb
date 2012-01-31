@@ -10,12 +10,12 @@ module HomebrewEnvExtension
 
     self['MAKEFLAGS'] = "-j#{self.make_jobs}"
 
-    unless HOMEBREW_PREFIX.to_s == '/usr/local'
+    unless Homebrew.prefix.to_s == '/usr/local'
       # /usr/local is already an -isystem and -L directory so we skip it
-      self['CPPFLAGS'] = "-isystem #{HOMEBREW_PREFIX}/include"
-      self['LDFLAGS'] = "-L#{HOMEBREW_PREFIX}/lib"
+      self['CPPFLAGS'] = "-isystem #{Homebrew.prefix}/include"
+      self['LDFLAGS'] = "-L#{Homebrew.prefix}/lib"
       # CMake ignores the variables above
-      self['CMAKE_PREFIX_PATH'] = "#{HOMEBREW_PREFIX}"
+      self['CMAKE_PREFIX_PATH'] = "#{Homebrew.prefix}"
     end
 
     # llvm allows -O4 however it often fails to link and is very slow
@@ -85,8 +85,8 @@ module HomebrewEnvExtension
   def gcc args = {}
     gcc_path = Pathname.new "/usr/bin/gcc-4.2"
     gxx_path = Pathname.new "/usr/bin/g++-4.2"
-    self['CC']  = gcc_path.exist? ? gcc_path : HOMEBREW_PREFIX+'bin/gcc-4.2'
-    self['CXX'] = gxx_path.exist? ? gxx_path : HOMEBREW_PREFIX+'bin/g++-4.2'
+    self['CC']  = gcc_path.exist? ? gcc_path : Homebrew.prefix + 'bin/gcc-4.2'
+    self['CXX'] = gxx_path.exist? ? gxx_path : Homebrew.prefix + 'bin/g++-4.2'
     replace_in_cflags '-O4', '-O3'
     set_cpu_cflags 'core2 -msse4', :penryn => 'core2 -msse4.1', :core2 => 'core2', :core => 'prescott', :bottle => 'generic'
     @compiler = :gcc
@@ -121,20 +121,20 @@ module HomebrewEnvExtension
         self['FCFLAGS'] = self['CFLAGS'] unless self['FCFLAGS']
         self['FFLAGS'] = self['CFLAGS'] unless self['FFLAGS']
       elsif not self['FCFLAGS'] or self['FFLAGS']
-        opoo <<-EOS
-No Fortran optimization information was provided.  You may want to consider
-setting FCFLAGS and FFLAGS or pass the `--default-fortran-flags` option to
-`brew install` if your compiler is compatible with GCC.
+        opoo <<-EOS.undent
+        No Fortran optimization information was provided.  You may want to consider
+        setting FCFLAGS and FFLAGS or pass the `--default-fortran-flags` option to
+        `brew install` if your compiler is compatible with GCC.
 
-If you like the default optimization level of your compiler, ignore this
-warning.
+        If you like the default optimization level of your compiler, ignore this
+        warning.
         EOS
       end
 
     elsif `/usr/bin/which gfortran`.chomp.size > 0
-      ohai <<-EOS
-Using Homebrew-provided fortran compiler.
-    This may be changed by setting the FC environment variable.
+      ohai <<-EOS.undent
+      Using Homebrew-provided fortran compiler.
+      This may be changed by setting the FC environment variable.
       EOS
       self['FC'] = `/usr/bin/which gfortran`.chomp
       self['F77'] = self['FC']
@@ -143,18 +143,18 @@ Using Homebrew-provided fortran compiler.
       self['FFLAGS'] = self['CFLAGS']
 
     else
-      onoe <<-EOS
-This formula requires a fortran compiler, but we could not find one by
-looking at the FC environment variable or searching your PATH for `gfortran`.
-Please take one of the following actions:
+      onoe <<-EOS.undnet
+      This formula requires a fortran compiler, but we could not find one by
+      looking at the FC environment variable or searching your PATH for `gfortran`.
+      Please take one of the following actions:
 
-  - Decide to use the build of gfortran 4.2.x provided by Homebrew using
-        `brew install gfortran`
+      - Decide to use the build of gfortran 4.2.x provided by Homebrew using
+            `brew install gfortran`
 
-  - Choose another Fortran compiler by setting the FC environment variable:
-        export FC=/path/to/some/fortran/compiler
-    Using an alternative compiler may produce more efficient code, but we will
-    not be able to provide support for build errors.
+      - Choose another Fortran compiler by setting the FC environment variable:
+            export FC=/path/to/some/fortran/compiler
+      Using an alternative compiler may produce more efficient code, but we will
+      not be able to provide support for build errors.
       EOS
       exit 1
     end
@@ -165,6 +165,7 @@ Please take one of the following actions:
     remove_from_cflags(/ ?-mmacosx-version-min=10\.\d/)
     append_to_cflags('-mmacosx-version-min=10.4')
   end
+
   def osx_10_5
     self['MACOSX_DEPLOYMENT_TARGET']="10.5"
     remove_from_cflags(/ ?-mmacosx-version-min=10\.\d/)
@@ -218,6 +219,7 @@ Please take one of the following actions:
     append_to_cflags '-m64'
     append 'LDFLAGS', '-arch x86_64'
   end
+
   def m32
     append_to_cflags '-m32'
     append 'LDFLAGS', '-arch i386'
@@ -325,9 +327,11 @@ Please take one of the following actions:
   def use_clang?
     compiler == :clang
   end
+
   def use_gcc?
     compiler == :gcc
   end
+
   def use_llvm?
     compiler == :llvm
   end

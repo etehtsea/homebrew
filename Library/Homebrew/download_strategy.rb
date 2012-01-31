@@ -43,9 +43,9 @@ module DownloadStrategy
 
       @unique_token = "#{name}-#{version}" unless name.to_s.empty? or name == '__UNKNOWN__'
       @tarball_path = if @unique_token
-                        HOMEBREW_CACHE + (@unique_token+ext)
+                        Homebrew.cache + (@unique_token+ext)
                       else
-                        HOMEBREW_CACHE + File.basename(@url)
+                        Homebrew.cache + File.basename(@url)
                       end
     end
 
@@ -198,7 +198,7 @@ module DownloadStrategy
   class CurlBottle < Curl
     def initialize(url, name, version, specs)
       super
-      @tarball_path = HOMEBREW_CACHE/"#{name}-#{version}.bottle#{ext}"
+      @tarball_path = Homebrew.cache/"#{name}-#{version}.bottle#{ext}"
     end
 
     def stage
@@ -212,7 +212,7 @@ module DownloadStrategy
       super
       @unique_token  = "#{name}--svn" unless name.to_s.empty? or name == '__UNKNOWN__'
       @unique_token += "-HEAD" if ARGV.include? '--HEAD'
-      @co = HOMEBREW_CACHE + @unique_token
+      @co = Homebrew.cache + @unique_token
     end
 
     def cached_location; @co; end
@@ -270,7 +270,7 @@ module DownloadStrategy
     # Not all features are available in the 10.5 system-provided svn.
     def svn
       return ENV['HOMEBREW_SVN'] if ENV['HOMEBREW_SVN']
-      return "#{HOMEBREW_PREFIX}/bin/svn" if File.exist? "#{HOMEBREW_PREFIX}/bin/svn"
+      return "#{Homebrew.prefix}/bin/svn" if File.exist? "#{Homebrew.prefix}/bin/svn"
       return '/usr/bin/svn'
     end
   end
@@ -314,7 +314,7 @@ module DownloadStrategy
     def initialize(url, name, version, specs)
       super
       @unique_token = "#{name}--git" unless name.to_s.empty? or name == '__UNKNOWN__'
-      @clone = HOMEBREW_CACHE + @unique_token
+      @clone = Homebrew.cache + @unique_token
     end
 
     def cached_location; @clone; end
@@ -396,7 +396,7 @@ module DownloadStrategy
     def initialize(url, name, version, specs)
       super
       @unique_token = "#{name}--cvs" unless name.to_s.empty? or name == '__UNKNOWN__'
-      @co = HOMEBREW_CACHE + @unique_token
+      @co = Homebrew.cache + @unique_token
     end
 
     def cached_location; @co; end
@@ -411,7 +411,7 @@ module DownloadStrategy
       mod, url = split_url(@url)
 
       unless @co.exist?
-        Dir.chdir HOMEBREW_CACHE do
+        Dir.chdir Homebrew.cache do
           safe_system '/usr/bin/cvs', '-d', url, 'login'
           safe_system '/usr/bin/cvs', '-d', url, 'checkout', '-d', @unique_token, mod
         end
@@ -447,7 +447,7 @@ module DownloadStrategy
     def initialize(url, name, version, specs)
       super
       @unique_token = "#{name}--hg" unless name.to_s.empty? or name == '__UNKNOWN__'
-      @clone = HOMEBREW_CACHE+@unique_token
+      @clone = Homebrew.cache+@unique_token
     end
 
     def cached_location; @clone; end
@@ -488,7 +488,7 @@ module DownloadStrategy
     def initialize(url, name, version, specs)
       super
       @unique_token = "#{name}--bzr" unless name.to_s.empty? or name == '__UNKNOWN__'
-      @clone = HOMEBREW_CACHE+@unique_token
+      @clone = Homebrew.cache+@unique_token
     end
 
     def cached_location; @clone; end
@@ -532,7 +532,7 @@ module DownloadStrategy
     def initialize(url, name, version, specs)
       super
       @unique_token = "#{name}--fossil" unless name.to_s.empty? or name == '__UNKNOWN__'
-      @clone = HOMEBREW_CACHE + @unique_token
+      @clone = Homebrew.cache + @unique_token
     end
 
     def cached_location; @clone; end

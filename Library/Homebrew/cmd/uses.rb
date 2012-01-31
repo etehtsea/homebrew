@@ -16,7 +16,7 @@ module Homebrew extend self
     end
     if ARGV.include? "--installed"
       uses = uses.select do |f|
-        keg = HOMEBREW_CELLAR/f
+        keg = Homebrew.cellar/f
         keg.directory? and not keg.subdirs.empty?
       end
     end

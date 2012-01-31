@@ -7,24 +7,30 @@
 ABS__FILE__=File.expand_path(__FILE__)
 
 $:.push(File.expand_path(__FILE__+'/../..'))
-require 'extend/pathname'
-require 'exceptions'
+require 'global'
 
-# these are defined in global.rb, but we don't want to break our actual
+# these are defined in homebrew.rb, but we don't want to break our actual
 # homebrew tree, and we do want to test everything :)
-HOMEBREW_PREFIX=Pathname.new '/private/tmp/testbrew/prefix'
-HOMEBREW_REPOSITORY=HOMEBREW_PREFIX
-HOMEBREW_CACHE=HOMEBREW_PREFIX.parent+"cache"
-HOMEBREW_CACHE_FORMULA=HOMEBREW_PREFIX.parent+"formula_cache"
-HOMEBREW_CELLAR=HOMEBREW_PREFIX.parent+"cellar"
-HOMEBREW_USER_AGENT="Homebrew"
-HOMEBREW_WWW='http://example.com'
-HOMEBREW_CURL_ARGS = '-fsLA'
-MACOS_VERSION=10.6
+module Homebrew
+  class << self
+    def prefix; Pathname.new '/private/tmp/testbrew/prefix'; end
+    def repository; Homebrew.prefix; end
+    def cache; Homebrew.prefix.parent+"cache"; end
+    def cache_formila; Homebrew.prefix.parent+"formula_cache"; end
+    def cellar; Homebrew.prefix.parent+"cellar"; end
+    def user_agent; "Homebrew"; end
+    def www; 'http://example.com'; end
+    def curl_args; '-fsLA'; end
+  end
+end
 
-(HOMEBREW_PREFIX+'Library/Formula').mkpath
-Dir.chdir HOMEBREW_PREFIX
-at_exit { HOMEBREW_PREFIX.parent.rmtree }
+module MacOS
+  def self.version; 10.6; end
+end
+
+(Homebrew.prefix + 'Library/Formula').mkpath
+Dir.chdir Homebrew.prefix
+at_exit { Homebrew.prefix.parent.rmtree }
 
 # Test fixtures and files can be found relative to this path
 TEST_FOLDER = Pathname.new(ABS__FILE__).parent.realpath

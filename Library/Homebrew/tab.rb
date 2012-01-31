@@ -46,7 +46,7 @@ class Tab < OpenStruct
 
   def self.for_formula f
     f = Formula.factory f unless f.kind_of? Formula
-    path = HOMEBREW_REPOSITORY + 'Library' + 'LinkedKegs' + f.name + 'INSTALL_RECEIPT.json'
+    path = Homebrew.repository + 'Library' + 'LinkedKegs' + f.name + 'INSTALL_RECEIPT.json'
 
     if path.exist?
       self.from_file path

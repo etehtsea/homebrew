@@ -21,7 +21,7 @@ end
 
 class VersionTests < Test::Unit::TestCase
   def test_pathname_version
-    d=HOMEBREW_CELLAR+'foo-0.1.9'
+    d=Homebrew.cellar+'foo-0.1.9'
     d.mkpath
     assert_equal '0.1.9', d.version
   end

@@ -16,7 +16,7 @@ end
 
 class TestZip <Formula
   def initialize
-    zip=HOMEBREW_CACHE.parent+'test-0.1.zip'
+    zip=Homebrew.cache.parent+'test-0.1.zip'
     Kernel.system '/usr/bin/zip', '-0', zip, ABS__FILE__
     @url="file://#{zip}"
     @homepage = 'http://example.com/'
@@ -46,9 +46,9 @@ class BeerTasting < Test::Unit::TestCase
     path=Formula.path(FOOBAR)
 
     assert_equal "FooBar", classname
-    assert_match Regexp.new("^#{HOMEBREW_PREFIX}/Library/Formula"), path.to_s
+    assert_match Regexp.new("^#{Homebrew.prefix}/Library/Formula"), path.to_s
 
-    path=HOMEBREW_PREFIX+"Library/Formula/#{FOOBAR}.rb"
+    path=Homebrew.prefix+"Library/Formula/#{FOOBAR}.rb"
     path.dirname.mkpath
     File.open(path, 'w') do |f|
       f << %{
@@ -136,7 +136,7 @@ class BeerTasting < Test::Unit::TestCase
   end
 
   def test_pathname_version
-    d=HOMEBREW_CELLAR+'foo-0.1.9'
+    d=Homebrew.cellar+'foo-0.1.9'
     d.mkpath
     assert_equal '0.1.9', d.version
   end
@@ -147,12 +147,12 @@ class BeerTasting < Test::Unit::TestCase
         assert !Pathname.getwd.rmdir_if_possible
         assert !Pathname.getwd.abv.empty?
 
-        abcd=orig_abcd=HOMEBREW_CACHE+'abcd'
+        abcd=orig_abcd=Homebrew.cache+'abcd'
         FileUtils.cp ABS__FILE__, abcd
-        abcd=HOMEBREW_PREFIX.install abcd
-        assert (HOMEBREW_PREFIX+orig_abcd.basename).exist?
+        abcd=Homebrew.prefix.install abcd
+        assert (Homebrew.prefix+orig_abcd.basename).exist?
         assert abcd.exist?
-        assert_equal HOMEBREW_PREFIX+'abcd', abcd
+        assert_equal Homebrew.prefix+'abcd', abcd
 
         assert_raises(RuntimeError) {abcd.write 'CONTENT'}
         abcd.unlink
@@ -166,22 +166,22 @@ class BeerTasting < Test::Unit::TestCase
 
         orig_abcd.unlink
         assert !orig_abcd.exist?
-        abcd.cp HOMEBREW_CACHE
+        abcd.cp Homebrew.cache
         assert orig_abcd.exist?
 
-        HOMEBREW_CACHE.chmod_R 0777
+        Homebrew.cache.chmod_R 0777
       end
     end
   end
 
   def test_pathname_properties
-    foo1 = HOMEBREW_CACHE/'foo-0.1.tar.gz'
+    foo1 = Homebrew.cache/'foo-0.1.tar.gz'
 
     assert_equal '.tar.gz', foo1.extname
     assert_equal 'foo-0.1', foo1.stem
     assert_equal '0.1', foo1.version
 
-    foo1 = HOMEBREW_CACHE/'foo-0.1.cpio.gz'
+    foo1 = Homebrew.cache/'foo-0.1.cpio.gz'
     assert_equal '.cpio.gz', foo1.extname
     assert_equal 'foo-0.1', foo1.stem
     assert_equal '0.1', foo1.version

@@ -13,7 +13,7 @@ module Homebrew extend self
   end
 
   def outdated_brews
-    HOMEBREW_CELLAR.subdirs.map do |rack|
+    Homebrew.cellar.subdirs.map do |rack|
       # Skip kegs with no versions installed
       next unless rack.subdirs
 

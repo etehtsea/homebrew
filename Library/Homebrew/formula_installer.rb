@@ -161,7 +161,7 @@ class FormulaInstaller
     Keg.new(f.prefix).link
   rescue Exception => e
     onoe "The linking step did not complete successfully"
-    puts "The formula built, but is not symlinked into #{HOMEBREW_PREFIX}"
+    puts "The formula built, but is not symlinked into #{Homebrew.prefix}"
     puts "You can try again using `brew link #{f.name}'"
     ohai e, e.backtrace if ARGV.debug?
     @show_summary_heading = true
@@ -188,11 +188,11 @@ class FormulaInstaller
   end
 
   def pour
-    HOMEBREW_CACHE.mkpath
+    Homebrew.cache.mkpath
     downloader = DownloadStrategy::CurlBottle.new f.bottle_url, f.name, f.version, nil
     downloader.fetch
     f.verify_download_integrity downloader.tarball_path, f.bottle_sha1, "SHA1"
-    HOMEBREW_CELLAR.cd do
+    Homebrew.cellar.cd do
       downloader.stage
     end
   end
@@ -205,7 +205,7 @@ class FormulaInstaller
 
   def in_aclocal_dirlist?
     File.open("/usr/share/aclocal/dirlist") do |dirlist|
-      dirlist.grep(%r{^#{HOMEBREW_PREFIX}/share/aclocal$}).length > 0
+      dirlist.grep(%r{^#{Homebrew.prefix}/share/aclocal$}).length > 0
     end rescue false
   end
 
@@ -213,7 +213,7 @@ class FormulaInstaller
     # warn the user if stuff was installed outside of their PATH
     [f.bin, f.sbin].each do |bin|
       if bin.directory? and bin.children.length > 0
-        bin = (HOMEBREW_PREFIX/bin.basename).realpath.to_s
+        bin = (Homebrew.prefix/bin.basename).realpath.to_s
         unless paths.include? bin
           opoo "#{bin} is not in your PATH"
           puts "You can amend this by altering your ~/.bashrc file"
@@ -261,7 +261,7 @@ class FormulaInstaller
     # Check for m4 files
     if Dir[f.share+"aclocal/*.m4"].length > 0 and not in_aclocal_dirlist?
       opoo 'm4 macros were installed to "share/aclocal".'
-      puts "Homebrew does not append \"#{HOMEBREW_PREFIX}/share/aclocal\""
+      puts "Homebrew does not append \"#{Homebrew.prefix}/share/aclocal\""
       puts "to \"/usr/share/aclocal/dirlist\". If an autoconf script you use"
       puts "requires these m4 macros, you'll need to add this path manually."
       @show_summary_heading = true
@@ -285,7 +285,7 @@ class Formula
     # Add indent into reason so undent won't truncate the beginnings of lines
     reason = self.keg_only?.to_s.gsub(/[\n]/, "\n    ")
     return <<-EOS.undent
-    This formula is keg-only, so it was not symlinked into #{HOMEBREW_PREFIX}.
+    This formula is keg-only, so it was not symlinked into #{Homebrew.prefix}.
 
     #{reason}
 

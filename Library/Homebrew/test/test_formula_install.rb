@@ -60,7 +60,7 @@ class InstallTests < Test::Unit::TestCase
     assert !f.installed?
 
     temporary_install f do
-      assert_match Regexp.new("^#{HOMEBREW_CELLAR}/"), f.prefix.to_s
+      assert_match Regexp.new("^#{Homebrew.cellar}/"), f.prefix.to_s
 
       # Test that things made it into the Keg
       assert f.bin.directory?
@@ -74,9 +74,9 @@ class InstallTests < Test::Unit::TestCase
       # Test that things make it into the Cellar
       keg=Keg.new f.prefix
       keg.link
-      assert_equal 2, HOMEBREW_PREFIX.children.length
-      assert (HOMEBREW_PREFIX+'bin').directory?
-      assert_equal 3, (HOMEBREW_PREFIX+'bin').children.length
+      assert_equal 2, Homebrew.prefix.children.length
+      assert (Homebrew.prefix+'bin').directory?
+      assert_equal 3, (Homebrew.prefix+'bin').children.length
     end
   end
 

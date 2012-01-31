@@ -10,12 +10,12 @@ module Homebrew extend self
     end unless ARGV.force?
 
     ARGV.formulae.each do |f|
-      if File.directory? HOMEBREW_REPOSITORY/"Library/LinkedKegs/#{f.name}"
+      if File.directory? Homebrew.repository/"Library/LinkedKegs/#{f.name}"
         raise "#{f} already installed\nTry: brew upgrade #{f}"
       end
     end unless ARGV.force?
 
-    if Process.uid.zero? and not File.stat(HOMEBREW_BREW_FILE).uid.zero?
+    if Process.uid.zero? and not File.stat(Homebrew.brew_file).uid.zero?
       # note we only abort if Homebrew is *not* installed as sudo and the user
       # calls brew as root. The fix is to chown brew to root.
       abort "Cowardly refusing to `sudo brew install'"
@@ -34,17 +34,17 @@ module Homebrew extend self
   end
 
   def check_writable_install_location
-    raise "Cannot write to #{HOMEBREW_CELLAR}" if HOMEBREW_CELLAR.exist? and not HOMEBREW_CELLAR.writable?
-    raise "Cannot write to #{HOMEBREW_PREFIX}" unless HOMEBREW_PREFIX.writable? or HOMEBREW_PREFIX.to_s == '/usr/local'
+    raise "Cannot write to #{Homebrew.cellar}" if Homebrew.cellar.exist? and not Homebrew.cellar.writable?
+    raise "Cannot write to #{Homebrew.prefix}" unless Homebrew.prefix.writable? or Homebrew.prefix.to_s == '/usr/local'
   end
 
   def check_cc
     if MacOS.snow_leopard?
-      if MacOS.llvm_build_version < RECOMMENDED_LLVM
+      if MacOS.llvm_build_version < Homebrew.recommended_llvm
         opoo "You should upgrade to Xcode 3.2.6"
       end
     else
-      if (MacOS.gcc_40_build_version < RECOMMENDED_GCC_40) or (MacOS.gcc_42_build_version < RECOMMENDED_GCC_42)
+      if (MacOS.gcc_40_build_version < Homebrew.recommended_gcc_40) or (MacOS.gcc_42_build_version < Homebrew.recommended_gcc_42)
         opoo "You should upgrade to Xcode 3.1.4"
       end
     end
@@ -63,11 +63,11 @@ module Homebrew extend self
   end
 
   def check_cellar
-    FileUtils.mkdir_p HOMEBREW_CELLAR if not File.exist? HOMEBREW_CELLAR
+    FileUtils.mkdir_p Homebrew.cellar if not File.exist? Homebrew.cellar
   rescue
     raise <<-EOS.undent
-      Could not create #{HOMEBREW_CELLAR}
-      Check you have permission to write to #{HOMEBREW_CELLAR.parent}
+      Could not create #{Homebrew.cellar}
+      Check you have permission to write to #{Homebrew.cellar.parent}
     EOS
   end
 

@@ -4,7 +4,7 @@ module Homebrew extend self
     # unparsable, if the user wants to cat multiple formula they can call
     # brew cat multiple times.
 
-    cd HOMEBREW_REPOSITORY
+    cd Homebrew.repository
     exec "cat", ARGV.formulae.first.path, *ARGV.options_only
   end
 end

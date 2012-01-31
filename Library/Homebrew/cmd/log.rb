@@ -1,6 +1,6 @@
 module Homebrew extend self
   def log
-    cd HOMEBREW_REPOSITORY
+    cd Homebrew.repository
     if ARGV.named.empty?
       exec "git", "log", *ARGV.options_only
     else

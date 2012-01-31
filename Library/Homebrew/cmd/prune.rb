@@ -7,7 +7,7 @@ module Homebrew extend self
     $d = 0
     dirs = []
 
-    %w[bin sbin etc lib include share Library/LinkedKegs].map{ |d| HOMEBREW_PREFIX+d }.each do |path|
+    %w[bin sbin etc lib include share Library/LinkedKegs].map{ |d| Homebrew.prefix+d }.each do |path|
       path.find do |path|
         path.extend ObserverPathnameExtension
         if path.symlink?
@@ -25,7 +25,7 @@ module Homebrew extend self
     else
       print "Pruned #{$n} symbolic links "
       print "and #{$d} directories " if $d > 0
-      puts  "from #{HOMEBREW_PREFIX}"
+      puts  "from #{Homebrew.prefix}"
     end
   end
 end

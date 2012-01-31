@@ -4,7 +4,7 @@ require 'cmd/prune'
 module Homebrew extend self
   def cleanup
     if ARGV.named.empty?
-      HOMEBREW_CELLAR.children.each do |rack|
+      Homebrew.cellar.children.each do |rack|
         begin
           cleanup_formula rack.basename.to_s if rack.directory?
         rescue FormulaUnavailableError => e

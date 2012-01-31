@@ -19,7 +19,7 @@ module HomebrewArgvExtension
     require 'formula'
     @kegs ||= downcased_unique_named.collect do |name|
       n = Formula.canonical_name(name)
-      rack = HOMEBREW_CELLAR + if n.include? "/"
+      rack = Homebrew.cellar + if n.include? "/"
         # canonical_name returns a path if it was a formula installed via a
         # URL. And we only want the name. FIXME that function is insane.
         Pathname.new(n).stem

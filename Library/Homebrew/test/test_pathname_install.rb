@@ -4,7 +4,7 @@ require 'extend/ARGV' # needs to be after test/unit to avoid conflict with Optio
 ARGV.extend(HomebrewArgvExtension)
 
 
-TEMP_FOLDER = HOMEBREW_PREFIX+"temp_dir"
+TEMP_FOLDER = Homebrew.prefix+"temp_dir"
 TARGET_FOLDER = TEMP_FOLDER+'folder1'
 
 class PathnameInstallTests < Test::Unit::TestCase

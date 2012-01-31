@@ -23,7 +23,7 @@ class ARGVTests < Test::Unit::TestCase
     assert_raises(KegUnspecifiedError) { ARGV.kegs }
     assert ARGV.named.empty?
 
-    (HOMEBREW_CELLAR+'mxcl/10.0').mkpath
+    (Homebrew.cellar+'mxcl/10.0').mkpath
 
     ARGV.reset
     ARGV.unshift 'mxcl'

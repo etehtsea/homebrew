@@ -72,6 +72,7 @@ begin
 
   # Add example external commands to PATH before checking.
   ENV['PATH'] += ":#{HOMEBREW_REPOSITORY}/Library/Contributions/examples"
+
   if system "/usr/bin/which -s brew-#{cmd}"
     %w[CACHE CELLAR LIBRARY_PATH PREFIX REPOSITORY].each do |e|
       ENV["HOMEBREW_#{e}"] = Object.const_get "HOMEBREW_#{e}"
@@ -82,14 +83,15 @@ begin
   elsif require? HOMEBREW_REPOSITORY/"Library/Homebrew/cmd"/cmd
     Homebrew.send cmd.to_s.gsub('-', '_')
   else
+    msg = "Unknown command: #{cmd}"
+
     # Check for git commands
     if %w[branch checkout pull push rebase reset].include? cmd
-      onoe "Unknown command: #{cmd} (did you mean `git #{cmd}'?)"
-      exit 1
-    else
-      onoe "Unknown command: #{cmd}"
-      exit 1
+      msg << " (did you mean `git #{cmd}'?)"
     end
+
+    onoe msg
+    exit 1
   end
 
 rescue FormulaUnspecifiedError
@@ -122,6 +124,7 @@ rescue BuildError => e
   puts
   onoe e
   issues = GitHub.issues_for_formula formula_name
+
   if issues.empty?
     puts "If `brew doctor' does not help diagnose the issue, please report the bug:"
     puts "    #{Tty.em}#{ISSUES_URL}#{Tty.reset}"
@@ -130,10 +133,12 @@ rescue BuildError => e
     puts "Otherwise, please report the bug:"
     puts "    #{Tty.em}#{ISSUES_URL}#{Tty.reset}"
   end
+
   if e.was_running_configure?
     puts "We saved the configure log, please gist it if you report the issue:"
     puts "    ~/Library/Logs/Homebrew/config.log"
   end
+
   exit 1
 rescue RuntimeError, SystemCallError => e
   onoe e

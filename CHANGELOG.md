@@ -1,5 +1,7 @@
 ## 0.9.0 (Unreleased) ##
 
+*  Replaced HOMEBREW_*, MACOS_* constants with corresponding modules
+   (ex. `Homebrew.version`)
 *  Refactored checksum methods. Added `Pathname::Checksum` module with
    spec:
       * `Pathname#sha2` -> `Pathname#sha256`

@@ -1,7 +1,7 @@
 module Homebrew
   class << self
     def version
-      '0.8.1'
+      '0.9.0'
     end
 
     def www

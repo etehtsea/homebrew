@@ -4,9 +4,17 @@
 ENV['HOMEBREW_BREW_FILE'] = File.expand_path(__FILE__)
 
 require 'pathname'
-HOMEBREW_LIBRARY_PATH = Pathname.new(__FILE__).realpath.dirname.parent.join("Library/Homebrew").to_s
-$:.unshift(HOMEBREW_LIBRARY_PATH + '/vendor')
-$:.unshift(HOMEBREW_LIBRARY_PATH)
+
+
+library_path = Pathname.new(__FILE__).realpath.dirname.parent.join("Library/Homebrew").to_s
+$:.unshift(library_path + '/vendor')
+$:.unshift(library_path)
+
+unless ARGV.include? "--no-compat" or ENV['HOMEBREW_NO_COMPAT']
+  $:.unshift(library_path + '/compat')
+  require 'compatibility'
+end
+
 require 'global'
 
 case ARGV.first when '-h', '--help', '--usage', '-?', 'help', nil
@@ -75,7 +83,7 @@ begin
 
   if system "/usr/bin/which -s brew-#{cmd}"
     %w[CACHE CELLAR LIBRARY_PATH PREFIX REPOSITORY].each do |e|
-      ENV["HOMEBREW_#{e}"] = Object.const_get "HOMEBREW_#{e}"
+      ENV["HOMEBREW_#{e}"] = Homebrew.send(e.downcase)
     end
     exec "brew-#{cmd}", *ARGV
   elsif require? `/usr/bin/which brew-#{cmd}.rb`

@@ -11,5 +11,8 @@ require 'exceptions'
 require 'fileutils'
 require 'macos'
 require 'homebrew'
+require 'github'
+
+include Utils
 
 ARGV.extend(HomebrewArgvExtension)

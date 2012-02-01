@@ -39,9 +39,7 @@ module Utils
 
     # Removes variable assignments completely.
     def remove_var!(flags)
-      # Next line is for Ruby 1.9.x compatibility
-      flags = [flags] unless flags.kind_of? Array
-      flags.each do |flag|
+      Array(flags).each do |flag|
         # Also remove trailing \n, if present.
         gsub! Regexp.new("^#{flag}[ \\t]*=(.*)$\n?"), ""
       end

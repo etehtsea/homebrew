@@ -53,8 +53,6 @@ module Homebrew extend self
     Hardware: #{Hardware.cores_as_words}-core #{Hardware.bits}-bit #{Hardware.intel_family}
     OS X: #{MacOS.full_version}
     Kernel Architecture: #{`uname -m`.chomp}
-    Ruby: #{RUBY_VERSION}-#{RUBY_PATCHLEVEL}
-    /usr/bin/ruby => #{Pathname.new('/usr/bin/ruby').realpath.to_s}
     Xcode: #{MacOS.xcode_version}
     GCC-4.0: #{MacOS.gcc_40_build_version ? "build #{MacOS.gcc_40_build_version}" : "N/A"}
     GCC-4.2: #{MacOS.gcc_42_build_version ? "build #{MacOS.gcc_42_build_version}" : "N/A"}

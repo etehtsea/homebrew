@@ -13,36 +13,19 @@ module Homebrew extend self
     sha.empty? ? "(none)" : sha
   end
 
-  def describe_perl
-    perl = `which perl`.chomp
-    return "N/A" unless perl
 
-    real_perl = Pathname.new(perl).realpath.to_s
-    return perl if perl == real_perl
-    return "#{perl} => #{real_perl}"
+  def describe(interpreter)
+    path = Pathname.new(`which #{interpreter}`.chomp)
+
+    if path
+      path.symlink? ? "#{path} => #{real_path(path)}" : path
+    else
+      "N/A"
+    end
   end
 
-  def describe_python
-    python = `which python`.chomp
-    return "N/A" unless python
-
-    real_python = Pathname.new(python).realpath.to_s
-
-    return python if python == real_python
-    return "#{python} => #{real_python}"
-  end
-
-  def describe_ruby
-    ruby = `which ruby`.chomp
-    return "N/A" unless ruby
-
-    real_ruby = Pathname.new(ruby).realpath.to_s
-    return ruby if ruby == real_ruby
-    return "#{ruby} => #{real_ruby}"
-  end
-
-  def real_path a_path
-    Pathname.new(a_path).realpath.to_s
+  def real_path(a_path)
+    Pathname(a_path).realpath
   end
 
   def config_s; <<-EOS.undent
@@ -61,10 +44,10 @@ module Homebrew extend self
     MacPorts or Fink? #{MacOS.macports_or_fink_installed?}
     X11 installed? #{MacOS.x11_installed?}
     System Ruby: #{RUBY_VERSION}-#{RUBY_PATCHLEVEL}
-    /usr/bin/ruby => #{real_path("/usr/bin/ruby")}
-    Which Perl:   #{describe_perl}
-    Which Python: #{describe_python}
-    Which Ruby:   #{describe_ruby}
+    /usr/bin/ruby => #{real_path('/usr/bin/ruby')}
+    Which Perl:   #{describe('perl')}
+    Which Python: #{describe('python')}
+    Which Ruby:   #{describe('ruby')}
     EOS
   end
 end

@@ -16,7 +16,7 @@ case ARGV.first when '-h', '--help', '--usage', '-?', 'help', nil
   puts Homebrew.help_s
   exit ARGV.first ? 0 : 1
 when '--version'
-  puts Homebrew.verson
+  puts Homebrew.version
   exit 0
 when '-v'
   if ARGV.length > 1

@@ -453,7 +453,8 @@ module DownloadStrategy
     def cached_location; @clone; end
 
     def fetch
-      raise "You must install Mercurial: brew install mercurial" unless system "/usr/bin/which hg"
+      raise "You must install Mercurial: brew install mercurial" \
+        unless system "/usr/bin/which -s hg"
 
       ohai "Cloning #{@url}"
 
@@ -495,7 +496,7 @@ module DownloadStrategy
 
     def fetch
       raise "You must install bazaar first" \
-        unless system "/usr/bin/which bzr"
+        unless system "/usr/bin/which -s bzr"
 
       ohai "Cloning #{@url}"
       unless @clone.exist?
@@ -539,7 +540,7 @@ module DownloadStrategy
 
     def fetch
       raise "You must install fossil first" \
-        unless system "/usr/bin/which fossil"
+        unless system "/usr/bin/which -s fossil"
 
       ohai "Cloning #{@url}"
       unless @clone.exist?

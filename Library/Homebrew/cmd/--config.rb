@@ -60,8 +60,8 @@ module Homebrew extend self
     GCC-4.2: #{MacOS.gcc_42_build_version ? "build #{MacOS.gcc_42_build_version}" : "N/A"}
     LLVM: #{MacOS.llvm_build_version ? "build #{MacOS.llvm_build_version}" : "N/A"}
     Clang: #{MacOS.clang_version ? "#{MacOS.clang_version} build #{MacOS.clang_build_version}" : "N/A"}
-    MacPorts or Fink? #{macports_or_fink_installed?}
-    X11 installed? #{x11_installed?}
+    MacPorts or Fink? #{MacOS.macports_or_fink_installed?}
+    X11 installed? #{MacOS.x11_installed?}
     System Ruby: #{RUBY_VERSION}-#{RUBY_PATCHLEVEL}
     /usr/bin/ruby => #{real_path("/usr/bin/ruby")}
     Which Perl:   #{describe_perl}

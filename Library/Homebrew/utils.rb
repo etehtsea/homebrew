@@ -1,5 +1,6 @@
 require 'pathname'
 require 'exceptions'
+require 'compat/compatibility'
 
 module Utils
   module Tty

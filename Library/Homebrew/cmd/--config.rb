@@ -13,6 +13,38 @@ module Homebrew extend self
     sha.empty? ? "(none)" : sha
   end
 
+  def describe_perl
+    perl = `which perl`.chomp
+    return "N/A" unless perl
+
+    real_perl = Pathname.new(perl).realpath.to_s
+    return perl if perl == real_perl
+    return "#{perl} => #{real_perl}"
+  end
+
+  def describe_python
+    python = `which python`.chomp
+    return "N/A" unless python
+
+    real_python = Pathname.new(python).realpath.to_s
+
+    return python if python == real_python
+    return "#{python} => #{real_python}"
+  end
+
+  def describe_ruby
+    ruby = `which ruby`.chomp
+    return "N/A" unless ruby
+
+    real_ruby = Pathname.new(ruby).realpath.to_s
+    return ruby if ruby == real_ruby
+    return "#{ruby} => #{real_ruby}"
+  end
+
+  def real_path a_path
+    Pathname.new(a_path).realpath.to_s
+  end
+
   def config_s; <<-EOS.undent
     HOMEBREW_VERSION: #{Homebrew.version}
     HEAD: #{sha}
@@ -30,6 +62,11 @@ module Homebrew extend self
     Clang: #{MacOS.clang_version ? "#{MacOS.clang_version} build #{MacOS.clang_build_version}" : "N/A"}
     MacPorts or Fink? #{macports_or_fink_installed?}
     X11 installed? #{x11_installed?}
+    System Ruby: #{RUBY_VERSION}-#{RUBY_PATCHLEVEL}
+    /usr/bin/ruby => #{real_path("/usr/bin/ruby")}
+    Which Perl:   #{describe_perl}
+    Which Python: #{describe_python}
+    Which Ruby:   #{describe_ruby}
     EOS
   end
 end

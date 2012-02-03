@@ -1,6 +1,7 @@
 require 'extend/pathname'
 require 'extend/ARGV'
 require 'extend/string'
+require 'deprecation'
 require 'utils'
 require 'exceptions'
 require 'fileutils'

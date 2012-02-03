@@ -9,10 +9,6 @@ library_path = Pathname.new(__FILE__).realpath.dirname.parent.join("Library/Home
 $:.unshift(library_path + '/vendor')
 $:.unshift(library_path)
 
-unless ARGV.include? "--no-compat" or ENV['HOMEBREW_NO_COMPAT']
-  require 'compat/compatibility'
-end
-
 require 'global'
 
 case ARGV.first when '-h', '--help', '--usage', '-?', 'help', nil

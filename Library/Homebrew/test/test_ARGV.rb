@@ -19,8 +19,6 @@ ARGV.extend ExtendArgvPlusYeast
 class ARGVTests < Test::Unit::TestCase
 
   def test_ARGV
-    assert_raises(FormulaUnspecifiedError) { ARGV.formulae }
-    assert_raises(KegUnspecifiedError) { ARGV.kegs }
     assert ARGV.named.empty?
 
     (Homebrew.cellar+'mxcl/10.0').mkpath

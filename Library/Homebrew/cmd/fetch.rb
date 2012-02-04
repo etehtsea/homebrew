@@ -3,6 +3,7 @@ require 'formula'
 # Downloads the tarballs for the given formulae to the Cache
 module Homebrew extend self
   def fetch
+    raise FormulaUnspecifiedError if ARGV.named.empty?
     Fetcher.new(ARGV).process
   end
 end

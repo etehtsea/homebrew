@@ -28,6 +28,7 @@ What Packages Are Available?
 ----------------------------
 1. You can [browse the Formulary repository on GitHub][formulary].
 2. Or type `brew search` for a list.
+3. Or visit [braumeister.org][braumeister] to browse packages online.
 
 More Documentation
 ------------------
@@ -43,3 +44,4 @@ I'm [Max Howell][mxcl] and I'm a splendid chap.
 [mxcl]:http://twitter.com/mxcl
 [formulary]:https://github.com/etehtsea/formulary
 [contrib]:https://github.com/etehtsea/homebrew-contrib
+[braumeister]:http://braumeister.org

@@ -17,7 +17,7 @@ module Homebrew extend self
   def describe(interpreter)
     path = Pathname.new(`which #{interpreter}`.chomp)
 
-    if path
+    if path.exist?
       path.symlink? ? "#{path} => #{real_path(path)}" : path
     else
       "N/A"

@@ -138,7 +138,7 @@ def check_for_stray_las
 end
 
 def check_for_x11
-  unless x11_installed?
+  unless MacOS.x11_installed?
     puts <<-EOS.undent
       X11 not installed.
 
@@ -165,7 +165,7 @@ def check_for_nonstandard_x11
 end
 
 def check_for_other_package_managers
-  if macports_or_fink_installed?
+  if MacOS.macports_or_fink_installed?
     puts <<-EOS.undent
       You have Macports or Fink installed. This can cause trouble.
       You don't have to uninstall them, but you may like to try temporarily

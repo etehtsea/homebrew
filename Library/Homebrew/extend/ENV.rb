@@ -213,7 +213,7 @@ module HomebrewEnvExtension
   def cxx;     self['CXX'] or "g++"; end
   def cflags;  self['CFLAGS'];       end
   def cxxflags;self['CXXFLAGS'];     end
-  def cppflags;self['CPPLAGS'];      end
+  def cppflags;self['CPPFLAGS'];      end
   def ldflags; self['LDFLAGS'];      end
 
   def m64

@@ -1,8 +1,7 @@
 require 'updater'
 
 module Homebrew extend self
-  def update
-    UpdateBrew.new
+  def repoupdate
     UpdateFormulary.new
   end
 end

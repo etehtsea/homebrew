@@ -3,7 +3,7 @@ require 'git'
 class Updater
   def initialize
     if update!
-      report(title, title_type)
+      report
     else
       puts "Already up-to-date."
     end
@@ -86,10 +86,10 @@ end
 
 class UpdateFormulary < Updater
   def initialize
-    @title      = 'Formulary',
-    @repo_url   = 'https://github.com/etehtsea/formulary.git',
-    @repo_dir   = Homebrew.formulary,
-    @track_dir  = 'Formula/',
+    @title      = 'Formulary'
+    @repo_url   = 'https://github.com/etehtsea/formulary.git'
+    @repo_dir   = Homebrew.formulary
+    @track_dir  = 'Formula/'
     @title_type = 'formulae'
 
     super
@@ -98,10 +98,10 @@ end
 
 class UpdateBrew < Updater
   def initialize
-    @title      = 'Homebrew',
-    @repo_url   = 'https://github.com/etehtsea/homebrew.git',
-    @repo_dir   = Homebrew.repository,
-    @track_dir  = 'Library/Homebrew/cmd',
+    @title      = 'Homebrew'
+    @repo_url   = 'https://github.com/etehtsea/homebrew.git'
+    @repo_dir   = Homebrew.repository
+    @track_dir  = 'Library/Homebrew/cmd'
     @title_type = 'commands'
 
     super

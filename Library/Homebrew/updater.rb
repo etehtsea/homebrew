@@ -1,3 +1,5 @@
+require 'git'
+
 class Updater
   def initialize
     if update!

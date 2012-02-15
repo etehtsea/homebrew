@@ -1,17 +1,23 @@
 require 'git'
 
 class Updater
-  def initialize
-    if update!
-      report
-    else
-      puts "Already up-to-date."
+  attr_accessor :title, :repo_url, :repo_dir, :track_dir
+
+  def initialize(*args)
+    if block_given?
+      yield self
+
+      if update!
+        report
+      else
+        puts "Already up-to-date."
+      end
     end
   end
 
   private
   def report
-    puts "Updated #{@title} from #{@initial[0,8]} to #{@current[0,8]}."
+    puts "Updated from #{@initial[0,8]} to #{@current[0,8]}."
 
     # get installed formulas list
     installed = Homebrew.cellar.children.
@@ -20,7 +26,7 @@ class Updater
 
     @changes.each do |type, changes|
       unless changes.empty?
-        ohai("#{type} #{@title_type}")
+        ohai type
 
         if installed.any?
           changes.map! { |item| installed.include?(item) ? "#{item}*" : item }
@@ -81,29 +87,5 @@ class Updater
 
   def changed_items(status, dir)
     basenames(filter_by_directory(@changes_map[status], dir)).sort
-  end
-end
-
-class UpdateFormulary < Updater
-  def initialize
-    @title      = 'Formulary'
-    @repo_url   = 'https://github.com/etehtsea/formulary.git'
-    @repo_dir   = Homebrew.formulary
-    @track_dir  = 'Formula/'
-    @title_type = 'formulae'
-
-    super
-  end
-end
-
-class UpdateBrew < Updater
-  def initialize
-    @title      = 'Homebrew'
-    @repo_url   = 'https://github.com/etehtsea/homebrew.git'
-    @repo_dir   = Homebrew.repository
-    @track_dir  = 'Library/Homebrew/cmd'
-    @title_type = 'commands'
-
-    super
   end
 end

@@ -1,8 +1,10 @@
 require 'updater'
+require 'cmd/selfupdate'
+require 'cmd/repoupdate'
 
 module Homebrew extend self
   def update
-    UpdateBrew.new
-    UpdateFormulary.new
+    selfupdate
+    repoupdate
   end
 end

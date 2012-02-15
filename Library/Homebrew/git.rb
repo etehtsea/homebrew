@@ -45,7 +45,7 @@ module Git
       # specify a refspec so that 'origin/master' gets updated
       refspec = "refs/heads/master:refs/remotes/origin/master"
       rebase = "--rebase" if ARGV.include? "--rebase"
-      execute "git pull #{rebase} origin #{refspec}"
+      execute "git pull -q #{rebase} origin #{refspec}"
     end
 
     def changes(initial, current)

@@ -17,6 +17,7 @@ class Updater
 
   private
   def report
+    oh1 title
     puts "Updated from #{@initial[0,8]} to #{@current[0,8]}."
 
     # get installed formulas list

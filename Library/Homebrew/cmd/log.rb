@@ -1,10 +1,13 @@
+require 'git'
 module Homebrew extend self
   def log
-    cd Homebrew.repository
     if ARGV.named.empty?
-      exec "git", "log", *ARGV.options_only
+      repo, opts = Homebrew.repository, ARGV.options_only
     else
-      exec "git", "log", *ARGV.options_only + ARGV.formulae.map(&:path)
+      repo = Homebrew.formulary
+      opts = ARGV.options_only + ARGV.formulae.map(&:path)
     end
+
+    Git::Repo.new(repo).log(opts)
   end
 end

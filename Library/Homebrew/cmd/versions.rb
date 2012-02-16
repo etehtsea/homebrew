@@ -2,8 +2,7 @@ require 'formula'
 
 module Homebrew extend self
   def versions
-    raise "Please `brew install git` first" unless system "/usr/bin/which -s git"
-
+    raise "Please `brew install git` first" unless Git.installed?
     raise FormulaUnspecifiedError if ARGV.named.empty?
 
     ARGV.formulae.all? do |f|
@@ -20,7 +19,6 @@ module Homebrew extend self
     end
   end
 end
-
 
 class Formula
   def versions

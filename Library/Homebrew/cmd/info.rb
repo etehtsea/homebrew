@@ -25,9 +25,9 @@ module Homebrew extend self
     user = 'mxcl'
     branch = 'master'
 
-    if system "/usr/bin/which -s git"
-      gh_user=`git config --global github.user 2>/dev/null`.chomp
-      /^\*\s*(.*)/.match(`git --git-dir=#{Homebrew.repository}/.git branch 2>/dev/null`)
+    if Git.installed?
+      gh_user= Git::Config.get('github.user')
+      /^\*\s*(.*)/.match(Git::Repo.new(Homebrew.repository).branch)
       unless $1.nil? || $1.empty? || $1.chomp == 'master' || gh_user.empty?
         branch = $1.chomp
         user = gh_user

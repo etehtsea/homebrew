@@ -572,7 +572,7 @@ def check_for_multiple_volumes
 end
 
 def check_for_git
-  unless system "/usr/bin/which -s git"
+  unless Git.installed?
     puts <<-EOS.undent
       "Git" was not found in your path.
 
@@ -587,10 +587,10 @@ def check_for_git
 end
 
 def check_git_newline_settings
-  return unless system "/usr/bin/which -s git"
+  return unless Git.installed?
 
-  autocrlf = `git config --get core.autocrlf`.chomp
-  safecrlf = `git config --get core.safecrlf`.chomp
+  autocrlf = Git::Config.get('core.autocrlf')
+  safecrlf = Git::Config.get('core.safecrlf')
 
   if autocrlf == 'input' and safecrlf == 'true'
     puts <<-EOS.undent
@@ -753,14 +753,13 @@ def check_missing_deps
 end
 
 def check_git_status
-  Homebrew.repository.cd do
-    cmd = `git status -s Library/Homebrew/`.chomp
-    if system "/usr/bin/which -s git" and File.directory? '.git' and not cmd.empty?
-      ohai "You have uncommitted modifications to Homebrew's core."
-      puts "Unless you know what you are doing, you should run:"
-      puts "cd "+Homebrew.repository+" && git reset --hard"
-      puts
-    end
+  repo   = Git::Repo.new(Homebrew.repository)
+  status = repo.short_status('Library/Homebrew')
+  if Git.installed? && repo.exists? && !status.empty?
+    ohai "You have uncommitted modifications to Homebrew's core."
+    puts "Unless you know what you are doing, you should run:"
+    puts "cd "+Homebrew.repository+" && git reset --hard"
+    puts
   end
 end
 
@@ -783,8 +782,8 @@ end
 
 def check_git_version
   # see https://github.com/blog/642-smart-http-support
-  return unless system "/usr/bin/which -s git"
-  `git --version`.chomp =~ /git version (\d)\.(\d)\.(\d)/
+  return unless Git.installed?
+  Git.version =~ /git version (\d)\.(\d)\.(\d)/
 
   if $2.to_i > 6
     return

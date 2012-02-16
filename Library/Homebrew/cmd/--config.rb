@@ -6,10 +6,7 @@ module Homebrew extend self
   end
 
   def sha
-    sha = Homebrew.repository.cd do
-      `git rev-parse --verify -q HEAD 2>/dev/null`.chomp
-    end
-
+    sha = Git::Repo.new(Homebrew.repository).head
     sha.empty? ? "(none)" : sha
   end
 

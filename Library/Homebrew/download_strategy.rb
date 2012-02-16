@@ -332,17 +332,15 @@ module DownloadStrategy
     end
 
     def fetch
-      raise "You must install Git: brew install git" unless system "/usr/bin/which -s git"
+      raise "You must install Git: brew install git" unless Git.installed?
 
       ohai "Cloning #{@url}"
 
       if @clone.exist?
-        Dir.chdir(@clone) do
-          # Check for interupted clone from a previous install
-          unless system 'git', 'status', '-s'
-            puts "Removing invalid .git repo from cache"
-            FileUtils.rm_rf @clone
-          end
+        # Check for interupted clone from a previous install
+        unless Git::Repo.new(@clone).short_status.empty?
+          puts "Removing invalid .git repo from cache"
+          FileUtils.rm_rf @clone
         end
       end
 

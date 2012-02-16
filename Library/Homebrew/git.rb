@@ -1,12 +1,41 @@
 module Git
-  class Repo
-    def initialize(dir, url)
-      unless system "/usr/bin/which -s git"
-        abort "Please `brew install git' first."
-      end
+  class << self
+    def installed?
+      system "/usr/bin/which -s git"
+    end
 
+    def version
+      `git --version`.chomp
+    end
+  end
+
+  class Config
+    def self.get(option)
+      `git config --get #{option}`.chomp
+    end
+  end
+
+  class Repo
+    def initialize(dir, url = nil)
+      abort "Please `brew install git' first." unless Git.installed?
       @url = url
       Dir.chdir(dir)
+    end
+
+    def branch
+      `git branch`.chomp
+    end
+
+    def log(args)
+      if args.empty?
+        exec "git", "log"
+      else
+        exec "git", "log", *args
+      end
+    end
+
+    def short_status(path = nil)
+      `git status -s #{path}`.chomp
     end
 
     def exists?
@@ -16,7 +45,7 @@ module Git
     def init
       begin
         safe_system "git init"
-        safe_system "git remote add origin #{@url}"
+        add_origin(@url)
         safe_system "git fetch origin"
         safe_system "git reset --hard origin/master"
       rescue Exception
@@ -26,7 +55,7 @@ module Git
     end
 
     def head
-      execute("git rev-parse HEAD").chomp
+      execute("git rev-parse --verify -q HEAD 2>/dev/null").chomp
     end
 
     def add_origin

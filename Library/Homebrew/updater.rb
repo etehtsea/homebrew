@@ -1,5 +1,3 @@
-require 'git'
-
 class Updater
   attr_accessor :title, :repo_url, :repo_dir, :track_dir
 

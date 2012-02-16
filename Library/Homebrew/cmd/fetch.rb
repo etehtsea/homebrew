@@ -25,7 +25,7 @@ class Fetcher
         puts "#{type.to_s.upcase}: #{tarball.send(type)}"
       end
 
-      formula_checksum = f.instance_variable_get("@#{f.checksum_type}")
+      formula_checksum = f.instance_variable_get("@#{f.checksum_type}").downcase
       tarball_checksum = tarball.send(f.checksum_type)
 
       unless formula_checksum == tarball_checksum

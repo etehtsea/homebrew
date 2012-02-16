@@ -24,13 +24,11 @@ module MacOS
     end
 
     def default_cc
-      cc = if !File.file? "/usr/bin/cc" and xcode_version > 4.3
-             # there is no cc file in Xcode 4.3.0 in the /Developer/usr/bin directory
-             "llvm-gcc"
-           else
-             "cc"
-           end
-      @@default_cc ||= Pathname.new("#{dev_tools_path}/#{cc}").realpath.basename.to_s
+      # Xcode 4.3.0 has no /Applications/Xcode/Contents/Developer/usr/bin/cc
+      # Xcode 4.3.0 has no GCC
+      cc = Pathname("#{dev_tools_path}/cc")
+      llvm_gcc = Pathname("#{dev_tools_path}/llvm-gcc")
+      @@default_cc |= (cc.file? ? cc : llvm_gcc).realpath.basename.to_s
     end
 
     def default_compiler
@@ -39,11 +37,7 @@ module MacOS
                              when "clang"; :clang
                              else
                                # guess :(
-                               if xcode_version > 4.2
-                                 :llvm
-                               else
-                                 :gcc
-                               end
+                               xcode_version >= "4.2" ? :llvm : :gcc
                              end
     end
 

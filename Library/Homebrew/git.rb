@@ -35,7 +35,7 @@ module Git
     end
 
     def short_status(path = nil)
-      `git status -s #{path}`.chomp
+      `git status -s #{path} 2> /dev/null`.chomp
     end
 
     def exists?

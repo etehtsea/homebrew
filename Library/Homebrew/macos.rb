@@ -26,7 +26,7 @@ module MacOS
     def default_cc
       cc = `/usr/bin/xcrun -find cc 2> /dev/null`.chomp
       cc = "#{dev_tools_path}/cc" if cc.empty?
-      @@default_cc ||= Pathname.new(cc).realpath.basename.to_s
+      @@default_cc ||= Pathname.new(cc).realpath.basename.to_s rescue nil
     end
 
     def default_compiler
@@ -63,7 +63,7 @@ module MacOS
     # usually /Developer
     def xcode_prefix
       @@xcode_prefix ||= begin
-        path = `/usr/bin/xcode-select -print-path 2>&1`.chomp
+        path = `/usr/bin/xcode-select -print-path 2>/dev/null`.chomp
         path = Pathname.new path
         if path.directory? and path.absolute?
           path

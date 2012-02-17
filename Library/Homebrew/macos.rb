@@ -23,8 +23,16 @@ module MacOS
       end
     end
 
+    def xcrun
+      @xcrun ||= begin
+        path = "#{xcode_prefix}/usr/bin/xcrun"
+        path = "xcrun" unless File.file? path # just in case
+        path
+      end
+    end
+
     def default_cc
-      cc = `/usr/bin/xcrun -find cc 2> /dev/null`.chomp
+      cc = `#{xcrun} -find cc 2> /dev/null`.chomp
       cc = "#{dev_tools_path}/cc" if cc.empty?
       @@default_cc ||= Pathname.new(cc).realpath.basename.to_s rescue nil
     end

@@ -68,7 +68,6 @@ module MacOS
       end
     end
 
-    # usually /Developer
     def xcode_prefix
       @@xcode_prefix ||= begin
         path = `/usr/bin/xcode-select -print-path 2>/dev/null`.chomp

@@ -70,7 +70,6 @@ module Utils
     def as_arch_flags
       self.collect{ |a| "-arch #{a}" }.join(' ')
     end
-  end
 
   # args are additional inputs to puts until a nil arg is encountered
   def ohai title, *sput

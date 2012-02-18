@@ -163,6 +163,7 @@ module HomebrewEnvExtension
     replace_in_cflags(/-Xarch_i386 (-march=\S*)/, '\1')
     # Clang mistakenly enables AES-NI on plain Nehalem
     set_cpu_cflags 'native', :nehalem => 'native -Xclang -target-feature -Xclang -aes'
+    append_to_cflags '-Qunused-arguments'
     @compiler = :clang
   end
 
@@ -349,6 +350,9 @@ module HomebrewEnvExtension
       # Don't set -msse3 and older flags because -march does that for us
       append_to_cflags '-march=' + map.fetch(Hardware.intel_family, default)
     end
+
+    # not really a 'CPU' cflag, but is only used with clang
+    remove_from_cflags %r{ -Qunused-arguments}
   end
 
   # actually c-compiler, so cc would be a better name

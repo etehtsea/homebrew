@@ -206,11 +206,15 @@ module MacOS
 
     # Actually Lion or newer
     def lion?
-      version >= 10.7
+      version >= 10.7 # Actually Lion or newer
+    end
+
+    def mountain_lion?
+      version >= 10.8 # Actually Mountain Lion or newer
     end
 
     def prefer_64_bit?
-      Hardware.is_64_bit? and snow_leopard?
+      Hardware.is_64_bit? and not leopard?
     end
 
     def bottles_supported?

@@ -34,14 +34,16 @@ module Utils
     # value with "new_value", or removes the definition entirely.
     def change_var!(flag, new_value)
       new_value = "#{flag}=#{new_value}"
-      gsub! Regexp.new("^#{flag}[ \\t]*=[ \\t]*(.*)$"), new_value
+      sub = gsub! Regexp.new("^#{flag}[ \\t]*=[ \\t]*(.*)$"), new_value
+      opoo "inreplace: changing '#{flag}' to '#{new_value}' failed" if sub.nil?
     end
 
     # Removes variable assignments completely.
     def remove_var!(flags)
       Array(flags).each do |flag|
         # Also remove trailing \n, if present.
-        gsub! Regexp.new("^#{flag}[ \\t]*=(.*)$\n?"), ""
+        sub = gsub! Regexp.new("^#{flag}[ \\t]*=(.*)$\n?"), ""
+        opoo "inreplace: removing '#{flag}' failed" if sub.nil?
       end
     end
 
@@ -223,7 +225,11 @@ module Utils
         s.extend(MakefileInreplace)
         yield s
       else
-        s.gsub!(before, after)
+        sub = s.gsub!(before, after)
+        if sub.nil?
+          opoo "inreplace in '#{path}' failed"
+          puts "Expected replacement of '#{before}' with '#{after}'"
+        end
       end
 
       f.reopen(path, 'w').write(s)

@@ -10,6 +10,10 @@ class Formula
   attr_reader :standard, :unstable
   attr_reader :bottle_url, :bottle_sha1, :head
 
+  # The build folder, usually in /tmp.
+  # Will only be non-nil during the stage method.
+  attr_reader :buildpath
+
   # Homebrew determines the name
   def initialize name='__UNKNOWN__', path=nil
     set_instance_variable 'homepage'
@@ -566,7 +570,10 @@ private
     verify_download_integrity fetched if fetched.kind_of? Pathname
     mktemp do
       downloader.stage
+      # Set path after the downloader changes the working folder.
+      @buildpath = Pathname.pwd
       yield
+      @buildpath = nil
     end
   end
 

@@ -1,7 +1,19 @@
 ## 0.9.0 (Unreleased) ##
 
+*  Refactored `update` mechanism. Introduced two new commands:
+      * `brew selfupdate` which updates homebrew core
+      * `brew repoupdate` which updates formulary
+      * `brew update` still updates both
+
+*  Git related stuff extracted in its own file
+
+*  Removed *compatibility/* layer
+
+*  MacOS module extracted in its own file
+
 *  Replaced HOMEBREW_*, MACOS_* constants with corresponding modules
-   (ex. `Homebrew.version`)
+   (ex. `Homebrew.version`, `MacOS.lion?`)
+
 *  Refactored checksum methods. Added `Pathname::Checksum` module with
    spec:
       * `Pathname#sha2` -> `Pathname#sha256`
@@ -23,11 +35,7 @@
 
 *  `contrib` was extracted to `homebrew-contrib` formula
 
-*  `brew update` command updates only formulas
-
-*  New `brew selfupdate` command which updates code
-
-*  Formulas were extracted to own repository
+*  Formulas were extracted in their own repository
 
 *  `OkJson` patched to accept symbols
 

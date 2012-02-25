@@ -21,7 +21,7 @@ Fork's TODO-List:
 5. *MacRuby support*; (?)
 6. *Improve installer*; (?)
 7. *Extensions engine*; (?)
-8. *Use rugged (or another ruby-git library)*; (?)
+8. **(partially done)** *Use rugged (or another ruby-git library)*;
 9. *Improve core documentation*;
 
 What Packages Are Available?

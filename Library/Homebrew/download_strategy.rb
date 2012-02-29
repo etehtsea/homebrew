@@ -388,6 +388,7 @@ module DownloadStrategy
         end
       end
     end
+    ENV['GIT_DIR'] = cached_location+'.git'
   end
 
   class CVS < Abstract

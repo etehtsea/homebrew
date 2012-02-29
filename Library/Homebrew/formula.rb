@@ -1,4 +1,5 @@
 require 'download_strategy'
+require 'dependencies'
 require 'formula_support'
 require 'hardware'
 require 'extend/fileutils'
@@ -355,17 +356,10 @@ class Formula
     Homebrew.repository + "Library/Formula/#{name.downcase}.rb"
   end
 
-  def mirrors
-    self.class.mirrors or []
-  end
+  def mirrors;       self.class.mirrors or []; end
 
-  def deps
-    self.class.deps or []
-  end
-
-  def external_deps
-    self.class.external_deps or {}
-  end
+  def deps;          self.class.dependencies.deps;          end
+  def external_deps; self.class.dependencies.external_deps; end
 
   # deps are in an installable order
   # which means if a depends on b then b will be ordered before a in this list
@@ -375,8 +369,8 @@ class Formula
 
   def self.expand_deps f
     f.deps.map do |dep|
-      dep = Formula.factory dep
-      expand_deps(dep) << dep
+      f_dep = Formula.factory dep.to_s
+      expand_deps(f_dep) << f_dep
     end
   end
 
@@ -595,7 +589,7 @@ private
       end
     end
 
-    attr_rw :version, :homepage, :mirrors, :specs, :deps, :external_deps
+    attr_rw :version, :homepage, :mirrors, :specs
     attr_rw :keg_only_reason, :fails_with_llvm_reason, :skip_clean_all
     attr_rw :bottle_url, :bottle_sha1
     attr_rw(*Pathname::Checksum::TYPES)
@@ -651,29 +645,12 @@ private
       @mirrors.uniq!
     end
 
-    def depends_on name
-      @deps ||= []
-      @external_deps ||= {:python => [], :perl => [], :ruby => [], :jruby => [], :chicken => [], :rbx => [], :node => [], :lua => []}
+    def dependencies
+      @dependencies ||= DependencyCollector.new
+    end
 
-      case name
-      when String, Formula
-        @deps << name
-      when Hash
-        key, value = name.shift
-        case value
-        when :python, :perl, :ruby, :jruby, :chicken, :rbx, :node, :lua
-          @external_deps[value] << key
-        when :optional, :recommended, :build
-          @deps << key
-        else
-          raise "Unsupported dependency type #{value}"
-        end
-      when Symbol
-        opoo "#{self.name} -- #{name}: Using symbols for deps is deprecated; use a string instead"
-        @deps << name.to_s
-      else
-        raise "Unsupported type #{name.class}"
-      end
+    def depends_on dep
+      dependencies.add(dep)
     end
 
     def skip_clean paths

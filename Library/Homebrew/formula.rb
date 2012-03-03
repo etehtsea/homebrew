@@ -546,6 +546,7 @@ private
       supplied, type = args
     end
 
+    type.downcase! if type.is_a?(String)
     hash = fn.send(type)
 
     if supplied and not supplied.empty?

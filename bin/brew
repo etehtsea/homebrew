@@ -6,7 +6,6 @@ ENV['HOMEBREW_BREW_FILE'] = File.expand_path(__FILE__)
 require 'pathname'
 
 library_path = Pathname.new(__FILE__).realpath.dirname.parent.join("Library/Homebrew").to_s
-$:.unshift(library_path + '/vendor')
 $:.unshift(library_path)
 
 require 'global'

@@ -74,7 +74,7 @@ begin
   # Add example external commands to PATH before checking.
   ENV['PATH'] += ":#{Homebrew.repository}/Library/Contributions/examples"
 
-  if system "/usr/bin/which -s brew-#{cmd}"
+  if UnixUtils.available?("brew-#{cmd}")
     %w[CACHE CELLAR LIBRARY_PATH PREFIX REPOSITORY].each do |e|
       ENV["HOMEBREW_#{e}"] = Homebrew.send(e.downcase)
     end

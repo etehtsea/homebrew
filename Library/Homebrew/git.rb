@@ -1,7 +1,7 @@
 module Git
   class << self
     def installed?
-      system "/usr/bin/which -s git"
+      UnixUtils.available?('git')
     end
 
     def version

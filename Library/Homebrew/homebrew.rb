@@ -32,7 +32,7 @@ module Homebrew
     end
 
     def brew_file
-      @@brew_file ||= ENV['HOMEBREW_BREW_FILE'] || `which brew`.chomp
+      @@brew_file ||= ENV['HOMEBREW_BREW_FILE'] || UnixUtils.which('brew')
     end
 
     # Where we link under

@@ -109,7 +109,7 @@ module MacOS
         # Xcode 4.3 xc* tools hang indefinately if xcode-select path is set thus
         raise if `xcode-select -print-path 2>/dev/null`.chomp == "/"
 
-        raise unless system "/usr/bin/which -s xcodebuild"
+        raise unless UnixUtils.available?('xcodebuild')
         `xcodebuild -version 2>/dev/null` =~ /Xcode (\d(\.\d)*)/
         raise if $1.nil? or not $?.success?
         $1
@@ -181,8 +181,7 @@ module MacOS
       # http://github.com/mxcl/homebrew/issues/#issue/48
 
       %w[port fink].each do |ponk|
-        path = `/usr/bin/which -s #{ponk}`
-        return ponk unless path.empty?
+        return ponk if UnixUtils.available?(ponk)
       end
 
       # we do the above check because macports can be relocated and fink may be

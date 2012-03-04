@@ -189,7 +189,7 @@ module HomebrewEnvExtension
         EOS
       end
 
-    elsif `/usr/bin/which gfortran`.chomp.size > 0
+    elsif UnixUtils.which('gfortran').size > 0
       ohai <<-EOS.undent
       Using Homebrew-provided fortran compiler.
       This may be changed by setting the FC environment variable.

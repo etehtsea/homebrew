@@ -1,8 +1,7 @@
-require 'vendor/unix_utils'
-
 require 'extend/pathname'
 require 'extend/ARGV'
 require 'extend/string'
+require 'extend/unix_utils'
 require 'deprecation'
 require 'git'
 require 'utils'

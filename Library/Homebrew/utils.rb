@@ -178,9 +178,9 @@ module Utils
     return editor unless editor.nil?
 
     # Find Textmate
-    return 'mate' if system "/usr/bin/which -s mate"
+    return 'mate' if UnixUtils.available?('mate')
     # Find # BBEdit / TextWrangler
-    return 'edit' if system "/usr/bin/which -s edit"
+    return 'edit' if UnixUtils.available?('edit')
     # Default to vim
     return '/usr/bin/vim'
   end

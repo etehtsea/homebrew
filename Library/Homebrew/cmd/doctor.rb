@@ -426,7 +426,7 @@ def check_user_path_3
 end
 
 def check_which_pkg_config
-  binary = `/usr/bin/which pkg-config`.chomp
+  binary = UnixUtils.which('pkg-config')
   return if binary.empty?
 
   unless binary == "#{Homebrew.prefix}/bin/pkg-config"
@@ -441,7 +441,7 @@ def check_which_pkg_config
 end
 
 def check_pkg_config_paths
-  binary = `/usr/bin/which pkg-config`.chomp
+  binary = UnixUtils.which('pkg-config')
   return if binary.empty?
 
   # Use the debug output to determine which paths are searched
@@ -593,7 +593,7 @@ def check_for_multiple_volumes
 end
 
 def check_for_git
-  unless system "/usr/bin/which -s git" then <<-EOS.undent
+  unless Git.installed? then <<-EOS.undent
     Git could not be found in your PATH.
     Homebrew uses Git for several internal functions, and some formulae use Git
     checkouts instead of stable tarballs. You may want to install Git:
@@ -624,7 +624,7 @@ end
 def check_for_autoconf
   return if MacOS.xcode_version >= "4.3"
 
-  autoconf = `/usr/bin/which autoconf`.chomp
+  autoconf = UnixUtils.which('autoconf')
   safe_autoconfs = %w[/usr/bin/autoconf /Developer/usr/bin/autoconf]
   unless autoconf.empty? or safe_autoconfs.include? autoconf then <<-EOS.undent
     An "autoconf" in your path blocks the Xcode-provided version at:
@@ -732,7 +732,7 @@ def check_missing_deps
 end
 
 def check_git_status
-  return unless system "/usr/bin/which -s git"
+  return unless Git.installed?
   Homebrew.repository.cd do
     unless `git status -s -- Library/Homebrew/ 2>/dev/null`.chomp.empty? then <<-EOS.undent
       You have uncommitted modifications to Homebrew's core.
@@ -773,7 +773,7 @@ def check_git_version
 end
 
 def check_for_enthought_python
-  if system "/usr/bin/which -s enpkg" then <<-EOS.undent
+  if UnixUtils.available?('enpkg') then <<-EOS.undent
     Enthought Python was found in your PATH.
     This can cause build problems, as this software installs its own
     copies of iconv and libxml2 into directories that are picked up by

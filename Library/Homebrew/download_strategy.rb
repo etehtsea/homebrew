@@ -99,7 +99,7 @@ module DownloadStrategy
         safe_system '/usr/bin/tar', 'xf', @tarball_path
         chdir
       when /^\xFD7zXZ\x00/ # xz compressed
-        raise "You must install XZutils: brew install xz" unless system "/usr/bin/which -s xz"
+        raise "You must install XZutils: brew install xz" unless UnixUtils.available?('xz')
         safe_system "xz -dc #{@tarball_path} | /usr/bin/tar xf -"
         chdir
       when '____pkg'
@@ -453,7 +453,7 @@ module DownloadStrategy
 
     def fetch
       raise "You must install Mercurial: brew install mercurial" \
-        unless system "/usr/bin/which -s hg"
+        unless UnixUtils.available?('hg')
 
       ohai "Cloning #{@url}"
 
@@ -495,7 +495,7 @@ module DownloadStrategy
 
     def fetch
       raise "You must install bazaar first" \
-        unless system "/usr/bin/which -s bzr"
+        unless UnixUtils.available?('bzr')
 
       ohai "Cloning #{@url}"
       unless @clone.exist?
@@ -539,7 +539,7 @@ module DownloadStrategy
 
     def fetch
       raise "You must install fossil first" \
-        unless system "/usr/bin/which -s fossil"
+        unless UnixUtils.available?('fossil')
 
       ohai "Cloning #{@url}"
       unless @clone.exist?

@@ -2,7 +2,6 @@ require 'download_strategy'
 require 'formula_support'
 require 'hardware'
 require 'extend/fileutils'
-require 'formula_specialties'
 
 # Derive and define at least @url, see Library/Formula for examples
 class Formula
@@ -723,3 +722,5 @@ private
     end
   end
 end
+
+require 'formula_specialties'

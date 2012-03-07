@@ -84,14 +84,7 @@ begin
   elsif require? Homebrew.repository/"Library/Homebrew/cmd"/cmd
     Homebrew.send cmd.to_s.gsub('-', '_')
   else
-    msg = "Unknown command: #{cmd}"
-
-    # Check for git commands
-    if %w[branch checkout pull push rebase reset].include? cmd
-      msg << " (did you mean `git #{cmd}'?)"
-    end
-
-    onoe msg
+    onoe "Unknown command: #{cmd}"
     exit 1
   end
 

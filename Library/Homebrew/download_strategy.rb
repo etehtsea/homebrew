@@ -198,7 +198,7 @@ module DownloadStrategy
   class CurlBottle < Curl
     def initialize(url, name, version, specs)
       super
-      @tarball_path = Homebrew.cache/"#{name}-#{version}.bottle#{ext}"
+      @tarball_path = Homebrew.cache/"#{name}-#{version}.#{MacOS.cat}.bottle#{ext}"
     end
 
     def stage

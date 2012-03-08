@@ -54,6 +54,10 @@ module Homebrew
       @@cellar ||= ((prefix + "Cellar").exist? ? prefix : repository) + "Cellar"
     end
 
+    def logs
+      @@logs ||= Pathname.new('~/Library/Logs/Homebrew/').expand_path
+    end
+
     def user_agent
       @@user_agent ||= "Homebrew #{version}" \
                        "(Ruby #{RUBY_VERSION}-#{RUBY_PATCHLEVEL};" \

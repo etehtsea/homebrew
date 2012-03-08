@@ -21,6 +21,7 @@ def Object.const_missing(name)
     :HOMEBREW_CURL_ARGS     => 'Homebrew.curl_args',
     :HOMEBREW_LIBRARY_PATH  => 'Homebrew.library_path',
     :HOMEBREW_REPOSITORY    => 'Homebrew.repository',
+    :HOMEBREW_LOGS          => 'Homebrew.logs',
     :FORMULARY_REPOSITORY   => 'Homebrew.formulary',
     :RECOMMENDED_LLVM       => 'Homebrew.recommended_llvm',
     :RECOMMENDED_GCC_40     => 'Homebrew.recommended_gcc_40',

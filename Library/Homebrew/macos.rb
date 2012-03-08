@@ -239,9 +239,5 @@ module MacOS
     def prefer_64_bit?
       Hardware.is_64_bit? and not leopard?
     end
-
-    def bottles_supported?
-      Homebrew.prefix.to_s == '/usr/local' and Homebrew.cellar.to_s == '/usr/local/Cellar'
-    end
   end
 end

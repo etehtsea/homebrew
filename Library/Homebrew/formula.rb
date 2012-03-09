@@ -23,7 +23,6 @@ class Formula
     set_instance_variable 'bottle_sha1'
     set_instance_variable 'head'
     set_instance_variable 'specs'
-
     set_instance_variable 'standard'
     set_instance_variable 'unstable'
 
@@ -40,15 +39,17 @@ class Formula
     end
 
     raise "No url provided for formula #{name}" if @url.nil?
-    @name=name
+    @name = name
     validate_variable :name
 
     # If we got an explicit path, use that, else determine from the name
     @path = path.nil? ? self.class.path(name) : Pathname.new(path)
 
+    # Use a provided version, if any
     set_instance_variable 'version'
+    # Otherwise detect the version from the URL
     @version ||= @spec_to_use.detect_version
-    validate_variable :version if @version
+    validate_variable :version
 
     Pathname::Checksum::TYPES.each { |type| set_instance_variable type }
 

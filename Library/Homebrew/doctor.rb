@@ -824,6 +824,25 @@ module Doctor
         end
       end
 
+      def unlinked_but_not_keg_only
+        unlinked = HOMEBREW_CELLAR.children.reject do |rack|
+          if not (HOMEBREW_REPOSITORY/"Library/LinkedKegs"/rack.basename).directory?
+            Formula.factory(rack.basename).keg_only? rescue nil
+          else
+            true
+          end
+        end.map{ |pn| pn.basename }
+
+        if not unlinked.empty? then <<-EOS.undent
+          You have unlinked kegs in your Cellar
+          Leaving kegs unlinked can lead to build-trouble and cause brews that depend on
+          those kegs to fail to run properly once built.
+
+              #{unlinked * "\n        "}
+          EOS
+        end
+      end
+
       def ppc
         case Hardware.cpu_type
         when :ppc, :dunno

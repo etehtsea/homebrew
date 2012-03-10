@@ -1,5 +1,6 @@
 require 'pathname'
 require 'exceptions'
+require 'extend/unix_utils'
 
 module Utils
   module Tty
@@ -170,6 +171,10 @@ module Utils
     else
       puts items
     end
+  end
+
+  def which(cmd)
+    UnixUtils.which(cmd)
   end
 
   def which_editor

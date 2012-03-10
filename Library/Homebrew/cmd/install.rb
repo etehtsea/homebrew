@@ -1,5 +1,4 @@
 require 'formula_installer'
-require 'hardware'
 require 'blacklist'
 
 module Homebrew extend self

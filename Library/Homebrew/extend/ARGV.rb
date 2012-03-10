@@ -30,7 +30,7 @@ module HomebrewArgvExtension
       dirs = rack.children.select{ |pn| pn.directory? } rescue []
       raise NoSuchKegError.new(name) if not rack.directory? or dirs.length == 0
 
-      linked_keg_ref = HOMEBREW_REPOSITORY/"Library/LinkedKegs"/name
+      linked_keg_ref = Homebrew.repository/"Library/LinkedKegs"/name
 
       if not linked_keg_ref.symlink?
         if dirs.length == 1

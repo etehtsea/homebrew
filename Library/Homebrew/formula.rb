@@ -1,7 +1,6 @@
 require 'download_strategy'
 require 'dependencies'
 require 'formula_support'
-require 'hardware'
 require 'extend/fileutils'
 
 # Derive and define at least @url, see Library/Formula for examples
@@ -189,8 +188,8 @@ class Formula
       rescue Interrupt, RuntimeError, SystemCallError => e
         unless ARGV.debug?
           %w(config.log CMakeCache.txt).select{|f| File.exist? f}.each do |f|
-            HOMEBREW_LOGS.install f
-            ohai "#{f} was copied to #{HOMEBREW_LOGS}"
+            Homebrew.logs.install f
+            ohai "#{f} was copied to #{Homebrew.logs}"
           end
           raise
         end

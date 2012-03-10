@@ -1,7 +1,7 @@
-module Git
+module Utils::Git
   class << self
     def installed?
-      UnixUtils.available?('git')
+      Unix.available?('git')
     end
 
     def version
@@ -55,7 +55,7 @@ module Git
     end
 
     def head
-      execute("git rev-parse --verify -q HEAD 2>/dev/null").chomp
+      Unix.execute("git rev-parse --verify -q HEAD 2>/dev/null").chomp
     end
 
     def add_origin
@@ -79,17 +79,6 @@ module Git
 
     def changes(initial, current)
       execute("git diff-tree -r --name-status -z #{initial} #{current}").split("\0")
-    end
-
-    private
-    def execute(cmd)
-      out = `#{cmd}`
-      if $? && !$?.success?
-        $stderr.puts out
-        raise "Failed while executing #{cmd}"
-      end
-      ohai(cmd, out) if ARGV.verbose?
-      out
     end
   end
 end

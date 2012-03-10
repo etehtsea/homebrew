@@ -1,6 +1,5 @@
 require 'testing_env'
 require 'utils'
-require 'hardware'
 require 'extend/ENV'
 require 'extend/ARGV'
 ENV.extend(HomebrewEnvExtension)

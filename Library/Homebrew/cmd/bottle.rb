@@ -10,7 +10,7 @@ module Homebrew extend self
     directory = Pathname.pwd
     filename = bottle_filename f
 
-    HOMEBREW_CELLAR.cd do
+    Homebrew.cellar.cd do
       ohai "Bottling #{f.name} #{f.version}..."
       # Use gzip, faster to compress than bzip2, faster to uncompress than bzip2
       # or an uncompressed tarball (and more bandwidth friendly).

@@ -6,7 +6,7 @@
 
 ORIGINAL_PATHS = ENV['PATH'].split(':').map{ |p| File.expand_path p }
 
-require 'global'
+require 'homebrew'
 
 at_exit do
   # the whole of everything must be run in at_exit because the formula has to
@@ -16,7 +16,6 @@ at_exit do
     raise $! if $! # an exception was already thrown when parsing the formula
 
     require 'extend/ENV'
-    require 'hardware'
     require 'keg'
 
     ENV.extend(HomebrewEnvExtension)

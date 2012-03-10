@@ -18,7 +18,7 @@ module Homebrew extend self
         # FIXME canonical_name is insane
         raise "Invalid usage" if name.include? '/'
 
-        rack = HOMEBREW_CELLAR/name
+        rack = Homebrew.cellar/name
         if rack.directory?
           puts "Uninstalling #{name}..."
           rack.children.each do |keg|

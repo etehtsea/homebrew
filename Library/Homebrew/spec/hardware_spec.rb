@@ -1,8 +1,7 @@
 require 'spec_helper'
+require 'homebrew'
 require 'extend/ARGV'
 ARGV.extend(HomebrewArgvExtension)
-
-require 'hardware'
 
 describe Hardware do
   its(:processor_count) { should == Hardware.send(:sysctl_value, 'hw.ncpu') }

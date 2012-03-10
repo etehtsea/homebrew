@@ -253,7 +253,7 @@ def __check_subdir_access base
 end
 
 def check_access_usr_local
-  return unless HOMEBREW_PREFIX.to_s == '/usr/local'
+  return unless Homebrew.prefix.to_s == '/usr/local'
 
   unless Pathname('/usr/local').writable? then <<-EOS.undent
     The /usr/local directory is not writable.
@@ -397,9 +397,9 @@ def check_user_path_1
           EOS
         end
       end
-    when "#{HOMEBREW_PREFIX}/bin"
+    when "#{Homebrew.prefix}/bin"
       $seen_prefix_bin = true
-    when "#{HOMEBREW_PREFIX}/sbin"
+    when "#{Homebrew.prefix}/sbin"
       $seen_prefix_sbin = true
     end
   end
@@ -431,7 +431,7 @@ def check_user_path_3
 end
 
 def check_which_pkg_config
-  binary = UnixUtils.which('pkg-config')
+  binary = Unix.which('pkg-config')
   return if binary.empty?
 
   unless binary == "#{Homebrew.prefix}/bin/pkg-config"
@@ -446,7 +446,7 @@ def check_which_pkg_config
 end
 
 def check_pkg_config_paths
-  binary = UnixUtils.which('pkg-config')
+  binary = Unix.which('pkg-config')
   return if binary.empty?
 
   # Use the debug output to determine which paths are searched
@@ -629,7 +629,7 @@ end
 def check_for_autoconf
   return if MacOS.xcode_version >= "4.3"
 
-  autoconf = UnixUtils.which('autoconf')
+  autoconf = Unix.which('autoconf')
   safe_autoconfs = %w[/usr/bin/autoconf /Developer/usr/bin/autoconf]
   unless autoconf.empty? or safe_autoconfs.include? autoconf then <<-EOS.undent
     An "autoconf" in your path blocks the Xcode-provided version at:
@@ -780,7 +780,7 @@ def check_git_version
 end
 
 def check_for_enthought_python
-  if UnixUtils.available?('enpkg') then <<-EOS.undent
+  if Unix.available?('enpkg') then <<-EOS.undent
     Enthought Python was found in your PATH.
     This can cause build problems, as this software installs its own
     copies of iconv and libxml2 into directories that are picked up by
@@ -801,11 +801,11 @@ def check_for_bad_python_symlink
 end
 
 def check_for_outdated_homebrew
-  HOMEBREW_PREFIX.cd do
+  Homebrew.prefix.cd do
     timestamp = if File.directory? ".git"
       `git log -1 --format="%ct" HEAD`.to_i
     else
-      (HOMEBREW_PREFIX/"Library").mtime.to_i
+      (Homebrew.prefix/"Library").mtime.to_i
     end
 
     if Time.now.to_i - timestamp > 60 * 60 * 24 then <<-EOS.undent

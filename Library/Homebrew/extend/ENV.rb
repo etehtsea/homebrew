@@ -10,7 +10,7 @@ module HomebrewEnvExtension
     remove_cc_etc
 
     # make any aclocal stuff installed in Homebrew available
-    ENV['ACLOCAL_PATH'] = "#{HOMEBREW_PREFIX}/share/aclocal" if MacOS.xcode_version < "4.3"
+    ENV['ACLOCAL_PATH'] = "#{Homebrew.prefix}/share/aclocal" if MacOS.xcode_version < "4.3"
 
     self['MAKEFLAGS'] = "-j#{self.make_jobs}"
 
@@ -195,7 +195,7 @@ module HomebrewEnvExtension
         EOS
       end
 
-    elsif UnixUtils.which('gfortran').size > 0
+    elsif Unix.which('gfortran').size > 0
       ohai <<-EOS.undent
       Using Homebrew-provided fortran compiler.
       This may be changed by setting the FC environment variable.

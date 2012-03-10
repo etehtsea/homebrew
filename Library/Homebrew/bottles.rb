@@ -6,7 +6,7 @@ def bottle_filename f
 end
 
 def bottles_supported?
-  HOMEBREW_PREFIX.to_s == '/usr/local' and HOMEBREW_CELLAR.to_s == '/usr/local/Cellar'
+  Homebrew.prefix.to_s == '/usr/local' and Homebrew.cellar.to_s == '/usr/local/Cellar'
 end
 
 def install_bottle? f

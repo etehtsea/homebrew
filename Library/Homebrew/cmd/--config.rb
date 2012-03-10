@@ -1,5 +1,3 @@
-require 'hardware'
-
 module Homebrew extend self
   def __config
     puts config_s
@@ -12,7 +10,7 @@ module Homebrew extend self
 
 
   def describe(interpreter)
-    path = Pathname.new(`which #{interpreter}`.chomp)
+    path = Unix.which(interpreter)
 
     if path.exist?
       path.symlink? ? "#{path} => #{real_path(path)}" : path

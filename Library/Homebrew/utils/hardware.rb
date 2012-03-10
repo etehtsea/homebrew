@@ -1,4 +1,4 @@
-module Hardware
+module Utils::Hardware
   # These methods use info spewed out by sysctl.
   # Look in <mach/machine.h> for decoding info.
   CPU_TYPES = { 7 => :intel, 18 => :ppc }

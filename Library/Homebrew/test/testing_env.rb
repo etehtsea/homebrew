@@ -7,7 +7,7 @@
 ABS__FILE__=File.expand_path(__FILE__)
 
 $:.push(File.expand_path(__FILE__+'/../..'))
-require 'global'
+require 'homebrew'
 
 # these are defined in homebrew.rb, but we don't want to break our actual
 # homebrew tree, and we do want to test everything :)

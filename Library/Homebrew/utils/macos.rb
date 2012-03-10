@@ -1,4 +1,4 @@
-module MacOS
+module Utils::MacOS
   class << self
     def full_version
       @@full_version ||= `/usr/bin/sw_vers -productVersion`.chomp
@@ -123,7 +123,7 @@ module MacOS
         # Xcode 4.3 xc* tools hang indefinately if xcode-select path is set thus
         raise if `xcode-select -print-path 2>/dev/null`.chomp == "/"
 
-        raise unless UnixUtils.available?('xcodebuild')
+        raise unless Unix.available?('xcodebuild')
         `xcodebuild -version 2>/dev/null` =~ /Xcode (\d(\.\d)*)/
         raise if $1.nil? or not $?.success?
         $1
@@ -195,7 +195,7 @@ module MacOS
       # http://github.com/mxcl/homebrew/issues/#issue/48
 
       %w[port fink].each do |ponk|
-        return ponk if UnixUtils.available?(ponk)
+        return ponk if Unix.available?(ponk)
       end
 
       # we do the above check because macports can be relocated and fink may be

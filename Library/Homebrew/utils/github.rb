@@ -1,4 +1,4 @@
-module GitHub
+module Utils::GitHub
   class << self
     def issues_for_formula name
       # bit basic as depends on the issue at github having the exact name of the

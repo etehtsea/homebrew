@@ -1,3 +1,16 @@
+require 'deprecation'
+require 'extend/pathname'
+require 'bottles'
+require 'extend/ARGV'
+require 'extend/string'
+require 'utils'
+require 'exceptions'
+require 'fileutils'
+
+include Utils
+
+ARGV.extend(HomebrewArgvExtension)
+
 module Homebrew
   class << self
     def version
@@ -10,7 +23,7 @@ module Homebrew
 
     def cache
       @@cache ||= if ENV['HOMEBREW_CACHE']
-                    Pathname.new(ENV['HOMEBREW_CACHE'])
+                    Pathname(ENV['HOMEBREW_CACHE'])
                   else
                     if Process.uid == 0 || !home_library.writable?
                       Pathname("/Library/Caches/Homebrew")
@@ -31,7 +44,7 @@ module Homebrew
     end
 
     def brew_file
-      @@brew_file ||= ENV['HOMEBREW_BREW_FILE'] || UnixUtils.which('brew')
+      @@brew_file ||= ENV['HOMEBREW_BREW_FILE'] || Unix.which('brew')
     end
 
     # Where we link under
@@ -94,18 +107,6 @@ module Homebrew
 
     def library_path
       @@library_path ||= nil
-    end
-
-    def system cmd, *args
-      puts "#{cmd} #{args*' '}" if ARGV.verbose?
-      fork do
-        yield if block_given?
-        args.collect!{|arg| arg.to_s}
-        exec(cmd, *args) rescue nil
-        exit! 1 # never gets here unless exec failed
-      end
-      Process.wait
-      $?.success?
     end
   end
 end

@@ -49,7 +49,7 @@ module Homebrew extend self
   end
 
   def clean_cache
-    HOMEBREW_CACHE.children.each do |pn|
+    Homebrew.cache.children.each do |pn|
       next unless pn.file?
       version = pn.version
       name = pn.basename.to_s.match(/(.*)-(#{version})/).captures.first rescue nil

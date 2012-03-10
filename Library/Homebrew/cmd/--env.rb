@@ -1,5 +1,4 @@
 require 'extend/ENV'
-require 'hardware'
 
 module Homebrew extend self
   def __env

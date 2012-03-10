@@ -25,8 +25,9 @@ module Homebrew
       @@cache ||= if ENV['HOMEBREW_CACHE']
                     Pathname(ENV['HOMEBREW_CACHE'])
                   else
+                    home_library = Pathname("/Library/Caches/Homebrew")
                     if Process.uid == 0 || !home_library.writable?
-                      Pathname("/Library/Caches/Homebrew")
+                      home_library
                     else
                       Pathname("~/Library/Caches/Homebrew").expand_path
                     end

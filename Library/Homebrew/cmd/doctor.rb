@@ -801,11 +801,11 @@ def check_for_bad_python_symlink
 end
 
 def check_for_outdated_homebrew
-  Homebrew.prefix.cd do
+  Homebrew.repository.cd do
     timestamp = if File.directory? ".git"
       `git log -1 --format="%ct" HEAD`.to_i
     else
-      (Homebrew.prefix/"Library").mtime.to_i
+      (Homebrew.repository/"Library").mtime.to_i
     end
 
     if Time.now.to_i - timestamp > 60 * 60 * 24 then <<-EOS.undent

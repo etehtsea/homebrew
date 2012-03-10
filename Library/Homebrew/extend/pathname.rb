@@ -1,5 +1,4 @@
 require 'pathname'
-require 'bottles'
 
 # we enhance pathname to make our code more readable
 class Pathname

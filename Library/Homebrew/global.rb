@@ -1,4 +1,5 @@
 require 'extend/pathname'
+require 'bottles'
 require 'extend/ARGV'
 require 'extend/string'
 require 'extend/unix_utils'

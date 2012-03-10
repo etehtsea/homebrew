@@ -1,7 +1,6 @@
 require 'download_strategy'
 require 'formula_support'
 require 'hardware'
-require 'bottles'
 require 'extend/fileutils'
 
 # Derive and define at least @url, see Library/Formula for examples
@@ -486,9 +485,6 @@ public
   end
 
 private
-
-  CHECKSUM_TYPES=[:md5, :sha1, :sha256].freeze
-
   def stage
     fetched, downloader = fetch
     verify_download_integrity fetched if fetched.kind_of? Pathname

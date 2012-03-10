@@ -103,8 +103,7 @@ module Utils::Unix
   end
 
   def which(infile)
-    stdout = execute("which #{infile}")
-    Pathname(stdout.strip) unless stdout.empty?
+    execute("which #{infile}").strip
   end
 
   def interactive_shell(f = nil)

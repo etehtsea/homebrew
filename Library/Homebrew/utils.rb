@@ -1,7 +1,6 @@
 require 'pathname'
 require 'exceptions'
 
-module Utils; end
 require 'utils/architecture_list'
 require 'utils/makefile_inreplace'
 require 'utils/output'

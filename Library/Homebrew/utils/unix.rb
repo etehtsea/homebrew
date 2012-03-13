@@ -104,7 +104,9 @@ module Utils
     end
 
     def which(infile)
-      execute("which #{infile}").strip
+      path = `which #{infile}`.strip
+
+      path unless path.empty?
     end
 
     def interactive_shell(f = nil)

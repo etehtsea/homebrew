@@ -181,7 +181,7 @@ def check_gcc_42
 end
 
 def check_xcode_exists
-  if MacOS.xcode_version == nil
+  if MacOS.xcode_version == 'unknown'
       <<-EOS.undent
         We couldn't detect any version of Xcode.
         If you downloaded Xcode from the App Store, you may need to run the installer.
@@ -199,9 +199,6 @@ def check_xcode_exists
 end
 
 def check_for_latest_xcode
-  # the check_xcode_exists check is enough
-  return if MacOS.xcode_version.nil?
-
   latest_xcode = case MacOS.version
     when 10.5 then "3.1.4"
     when 10.6 then "3.2.6"
@@ -627,7 +624,7 @@ def check_git_newline_settings
 end
 
 def check_for_autoconf
-  return if MacOS.xcode_version >= "4.3"
+  return if MacOS.xcode_version >= "4.3" && MacOS.xcode_version != 'unknown'
 
   autoconf = Unix.which('autoconf')
   safe_autoconfs = %w[/usr/bin/autoconf /Developer/usr/bin/autoconf]

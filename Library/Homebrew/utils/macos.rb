@@ -23,170 +23,77 @@ module Utils
         end
       end
 
-      def dev_tools_path
-        @@dev_tools_path ||= if File.file? "/usr/bin/cc" and File.file? "/usr/bin/make"
-          # probably a safe enough assumption
-          "/usr/bin"
-        elsif File.file? "#{xcode_prefix}/usr/bin/make"
-          # cc stopped existing with Xcode 4.3, there are c89 and c99 options though
-          "#{xcode_prefix}/usr/bin"
-        else
-          # yes this seems dumb, but we can't throw because the existance of
-          # dev tools is not mandatory for installing formula. Eventually we
-          # should make forumla specify if they need dev tools or not.
-          "/usr/bin"
-        end
-      end
-
-      def xctools_fucked?
-        # Xcode 4.3 tools hang if "/" is set
-        `/usr/bin/xcode-select -print-path 2>/dev/null`.chomp == "/"
-      end
-
-      def default_cc
-        cc = unless xctools_fucked?
-          out = `/usr/bin/xcrun -find cc 2> /dev/null`.chomp
-          out if $?.success?
-        end
-        cc = "#{dev_tools_path}/cc" if cc.nil? or cc.empty?
-
-        unless File.executable? cc
-          # If xcode-select isn't setup then xcrun fails and on Xcode 4.3
-          # the cc binary is not at #{dev_tools_path}. This return is almost
-          # worthless however since in this particular setup nothing much builds
-          # but I wrote the code now and maybe we'll fix the other issues later.
-          cc = "#{xcode_prefix}/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc"
-        end
-        @@default_cc ||= Pathname.new(cc).realpath.basename.to_s rescue nil
-      end
-
       def default_compiler
-        @@default_compiler ||= case default_cc
-                               when /^llvm/; :llvm
-                               when "clang"; :clang
-                               else
-                                 # guess :(
-                                 if xcode_version >= "4.3"
-                                   :clang
-                                 elsif xcode_version >= "4.2"
-                                   :llvm
-                                 else
-                                   :gcc
-                                 end
-                               end
+        @@default_compiler ||=
+          if xcode_version >= '4.3'
+            :clang
+          elsif xcode_version >= '4.2'
+            :llvm
+          elsif xcode_version < '4.2'
+            :gcc
+          else
+            # FIXME: fallback properly
+            :clang
+          end
+      end
+
+      def build_version(cc)
+        if Unix.available?(cc)
+          regexp = case cc
+                   when /gcc/  ; /build (\d{4,})/
+                   when /llvm/ ; /LLVM build (\d{4,})/
+                   when /clang/; %r[tags/Apple/clang-(\d{2,})]
+                   end
+          `#{cc} --version 2>/dev/null` =~ regexp
+          $1.to_i if $?.success?
+        end
       end
 
       def gcc_42_build_version
-        @@gcc_42_build_version ||= if File.exist? "#{dev_tools_path}/gcc-4.2" \
-          and not Pathname.new("#{dev_tools_path}/gcc-4.2").realpath.basename.to_s =~ /^llvm/
-          `#{dev_tools_path}/gcc-4.2 --version` =~ /build (\d{4,})/
-          $1.to_i
-        end
+        @@gcc_42_build_version ||= build_version('gcc-4.2')
       end
 
       def gcc_40_build_version
-        @@gcc_40_build_version ||= if File.exist? "#{dev_tools_path}/gcc-4.0"
-          `#{dev_tools_path}/gcc-4.0 --version` =~ /build (\d{4,})/
-          $1.to_i
-        end
-      end
-
-      def xcode_prefix
-        @@xcode_prefix ||= begin
-          path = `/usr/bin/xcode-select -print-path 2>/dev/null`.chomp
-          path = Pathname.new path
-          if $?.success? and path.directory? and path.absolute?
-            path
-          elsif File.directory? '/Developer'
-            # we do this to support cowboys who insist on installing
-            # only a subset of Xcode
-            Pathname.new '/Developer'
-          elsif File.directory? '/Applications/Xcode.app/Contents/Developer'
-            # fallback for broken Xcode 4.3 installs
-            Pathname.new '/Applications/Xcode.app/Contents/Developer'
-          else
-            # Ask Spotlight where Xcode is. If the user didn't install the
-            # helper tools and installed Xcode in a non-conventional place, this
-            # is our only option. See: http://superuser.com/questions/390757
-            path = `mdfind "kMDItemDisplayName==Xcode&&kMDItemKind==Application"`
-            path = "#{path}/Contents/Developer"
-            if path.empty? or not File.directory? path
-              nil
-            else
-              path
-            end
-          end
-        end
-      end
-
-      def xcode_version
-        @@xcode_version ||= begin
-          # Xcode 4.3 xc* tools hang indefinately if xcode-select path is set thus
-          raise if `xcode-select -print-path 2>/dev/null`.chomp == "/"
-
-          raise unless Unix.available?('xcodebuild')
-          `xcodebuild -version 2>/dev/null` =~ /Xcode (\d(\.\d)*)/
-          raise if $1.nil? or not $?.success?
-          $1
-        rescue
-          # For people who's xcode-select is unset, or who have installed
-          # xcode-gcc-installer or whatever other combinations we can try and
-          # supprt. See https://github.com/mxcl/homebrew/wiki/Xcode
-          case nil
-          when 0..2063 then "3.1.0"
-          when 2064..2065 then "3.1.4"
-          when 2366..2325
-            # we have no data for this range so we are guessing
-            "3.2.0"
-          when 2326
-            # also applies to "3.2.3"
-            "3.2.4"
-          when 2327..2333 then "3.2.5"
-          when 2335
-            # this build number applies to 3.2.6, 4.0 and 4.1
-            # https://github.com/mxcl/homebrew/wiki/Xcode
-            "4.0"
-          else
-          case (clang_version.to_f * 10).to_i
-            when 0..14;  "3.2.2"
-            when 15;     "3.2.4"
-            when 16;     "3.2.5"
-            when 17..20; "4.0"
-            when 21;     "4.1"
-            when 22..30; "4.2"
-            when 31;     "4.3"
-            else
-              "4.3"
-            end
-          end
-        end
+        @@gcc_40_build_version ||= build_version('gcc-4.0')
       end
 
       def llvm_build_version
         # for Xcode 3 on OS X 10.5 this will not exist
         # NOTE may not be true anymore but we can't test
-        @@llvm_build_version ||= if File.exist? "#{dev_tools_path}/llvm-gcc"
-          `#{dev_tools_path}/llvm-gcc --version` =~ /LLVM build (\d{4,})/
-          $1.to_i
-        end
-      end
-
-      def clang_version
-        @@clang_version ||= if File.exist? "#{dev_tools_path}/clang"
-          `#{dev_tools_path}/clang --version` =~ /clang version (\d\.\d)/
-          $1
-        end
+        @@llvm_build_version ||= build_version('llvm-gcc')
       end
 
       def clang_build_version
-        @@clang_build_version ||= if File.exist? "#{dev_tools_path}/clang"
-          `#{dev_tools_path}/clang --version` =~ %r[tags/Apple/clang-(\d{2,})]
-          $1.to_i
+        @@clang_build_version ||= build_version('clang')
+      end
+
+      def clang_version
+        @@clang_version ||= if Unix.available?('clang')
+          `clang --version 2>/dev/null` =~ /clang version (\d\.\d)/
+          $1 if $?.success?
         end
       end
 
+      def xcode_prefix
+        @@xcode_prefix ||= if Unix.available?('xcode-select')
+          Pathname(`xcode-select -print-path 2>/dev/null`.chomp)
+        end
+      end
+
+      def xcode_version
+        @@xcode_version ||=
+          if Unix.available?('xcrun') && File.exist?(`xcrun -find xcodebuild`.strip)
+            `xcrun xcodebuild -version 2>/dev/null` =~ /Xcode (\d(\.\d)*)/
+            $1 if $?.success?
+          else
+            # FIXME: added for compatibility with a couple of formulas which are
+            # checking xcode version
+            'unknown'
+          end
+      end
+
       def x11_installed?
-        Pathname.new('/usr/X11/lib/libpng.dylib').exist?
+        Pathname('/usr/X11/lib/libpng.dylib').exist?
       end
 
       def macports_or_fink_installed?

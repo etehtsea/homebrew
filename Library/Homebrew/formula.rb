@@ -188,10 +188,11 @@ class Formula
         # so load any deps before this point! And exit asap afterwards
         yield self
       rescue Interrupt, RuntimeError, SystemCallError => e
+        puts if Interrupt === e # don't print next to the ^C
         unless ARGV.debug?
           %w(config.log CMakeCache.txt).select{|f| File.exist? f}.each do |f|
             Homebrew.logs.install f
-            ohai "#{f} was copied to #{Homebrew.logs}"
+            puts "#{f} was copied to #{Homebrew.logs}"
           end
           raise
         end

@@ -187,6 +187,23 @@ module Doctor
         end
       end
 
+      def broken_symlinks
+        broken_symlinks = []
+        %w[lib include sbin bin etc share].each do |d|
+          d = HOMEBREW_PREFIX/d
+          d.find do |pn|
+            if pn.symlink? and pn.readlink.expand_path.to_s =~ /^#{Homebrew.prefix}/ and not pn.exist?
+              broken_symlinks << pn
+            end
+          end
+        end
+        unless broken_symlinks.empty? then <<-EOS.undent
+          Broken symlinks were found. Remove them with `brew prune':
+            #{broken_symlinks * "\n      "}
+          EOS
+        end
+      end
+
       def gcc_42
         if MacOS.gcc_42_build_version == nil
           # Don't show this warning on Xcode 4.2+

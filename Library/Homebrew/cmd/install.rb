@@ -54,7 +54,7 @@ private
       if critical
         raise result
       else
-        puts result
+        opoo result
       end
     end
   end

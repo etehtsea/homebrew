@@ -1,5 +1,5 @@
 require 'cmd/outdated'
-require 'cmd/install'
+require 'doctor'
 
 class Fixnum
   def plural_s
@@ -9,13 +9,7 @@ end
 
 module Homebrew extend self
   def upgrade
-    if Process.uid.zero? and not File.stat(HOMEBREW_BREW_FILE).uid.zero?
-      # note we only abort if Homebrew is *not* installed as sudo and the user
-      # calls brew as root. The fix is to chown brew to root.
-      abort "Cowardly refusing to `sudo brew upgrade'"
-    end
-
-    Homebrew.perform_preinstall_checks
+    Doctor.perform_preinstall_checks
 
     outdated = if ARGV.named.empty?
       Homebrew.outdated_brews

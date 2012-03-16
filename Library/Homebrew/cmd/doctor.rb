@@ -4,8 +4,8 @@ module Homebrew extend self
   def doctor
     raring_to_brew = true
 
-    Doctor.methods(false).sort.each do |method|
-      out = Doctor.send(method)
+    Doctor::Check.methods(false).sort.each do |method|
+      out = Doctor::Check.send(method)
       unless out.nil? or out.empty?
         puts unless raring_to_brew
         lines = out.to_s.split('\n')

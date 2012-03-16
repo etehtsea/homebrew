@@ -1,28 +1,28 @@
-class Volumes
-  def initialize
-    @volumes = []
-    raw_mounts=`/sbin/mount`
-    raw_mounts.split("\n").each do |line|
-      case line
-      when /^(.+) on (\S+) \(/
-        @volumes << [$1, $2]
-      end
-    end
-    # Sort volumes by longest path prefix first
-    @volumes.sort! {|a,b| b[1].length <=> a[1].length}
-  end
-
-  def which path
-    @volumes.each_index do |i|
-      vol = @volumes[i]
-      return i if vol[1].start_with? path.to_s
-    end
-
-    return -1
-  end
-end
-
 module Doctor
+  class Volumes
+    def initialize
+      @volumes = []
+      raw_mounts=`/sbin/mount`
+      raw_mounts.split("\n").each do |line|
+        case line
+        when /^(.+) on (\S+) \(/
+          @volumes << [$1, $2]
+        end
+      end
+      # Sort volumes by longest path prefix first
+      @volumes.sort! {|a,b| b[1].length <=> a[1].length}
+    end
+
+    def which path
+      @volumes.each_index do |i|
+        vol = @volumes[i]
+        return i if vol[1].start_with? path.to_s
+      end
+
+      return -1
+    end
+  end
+
   class << self
     def check(name, critical = false)
       result = Doctor::Check.send(name)

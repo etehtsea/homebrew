@@ -36,7 +36,7 @@ module Utils
             :clang
           end
       end
-u
+
       def gcc_42_build_version
         @@gcc_42_build_version ||= build_version('gcc-4.2')
       end

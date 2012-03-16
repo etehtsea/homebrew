@@ -34,19 +34,20 @@ module Homebrew extend self
   end
 
   def check_cc
-    if MacOS.snow_leopard?
-      if MacOS.llvm_build_version < Homebrew.recommended_llvm
-        opoo "You should upgrade to Xcode 3.2.6"
-      end
-    else
-      if (MacOS.gcc_40_build_version < Homebrew.recommended_gcc_40) or (MacOS.gcc_42_build_version < Homebrew.recommended_gcc_42)
-        opoo "You should upgrade to Xcode 3.1.4"
-      end
+    if MacOS.xcode_version == 'unknown'
+      # the reason we don't abort is some formula don't require Xcode
+      # TODO allow formula to declare themselves as "not needing Xcode"
+      opoo "Xcode is not installed! Builds may fail!"
     end
-  rescue
-    # the reason we don't abort is some formula don't require Xcode
-    # TODO allow formula to declare themselves as "not needing Xcode"
-    opoo "Xcode is not installed! Builds may fail!"
+
+    case MacOS.cat
+    when :lion
+      opoo "You should upgrade to Xcode > 4.3" if MacOS.xcode_version < '4.3'
+    when :snowleopard
+      opoo "You should upgrade to Xcode 3.2.6" if MacOS.xcode_version < '3.2.6'
+    when :leopard
+      opoo "You should upgrade to Xcode 3.1.4" if MacOS.xcode_version < '3.1.4'
+    end
   end
 
   def check_macports

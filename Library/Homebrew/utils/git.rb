@@ -46,7 +46,7 @@ module Utils
       def init
         begin
           safe_system "git init"
-          add_origin(@url)
+          add_origin
           safe_system "git fetch origin"
           safe_system "git reset --hard origin/master"
         rescue Exception

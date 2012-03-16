@@ -429,7 +429,7 @@ end
 
 def check_which_pkg_config
   binary = Unix.which('pkg-config')
-  return if binary.empty?
+  return if binary
 
   unless binary == "#{Homebrew.prefix}/bin/pkg-config"
     <<-EOS.undent
@@ -444,7 +444,7 @@ end
 
 def check_pkg_config_paths
   binary = Unix.which('pkg-config')
-  return if binary.empty?
+  return if binary
 
   # Use the debug output to determine which paths are searched
   pkg_config_paths = []
@@ -628,7 +628,7 @@ def check_for_autoconf
 
   autoconf = Unix.which('autoconf')
   safe_autoconfs = %w[/usr/bin/autoconf /Developer/usr/bin/autoconf]
-  unless autoconf.empty? or safe_autoconfs.include? autoconf then <<-EOS.undent
+  unless autoconf or safe_autoconfs.include? autoconf then <<-EOS.undent
     An "autoconf" in your path blocks the Xcode-provided version at:
       #{autoconf}
 

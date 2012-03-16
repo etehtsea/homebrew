@@ -72,9 +72,8 @@ module DownloadStrategy
           end
         end
       else
-        puts "File already downloaded in #{File.dirname(@tarball_path)}"
+        puts "Already downloaded: #{@tarball_path}"
       end
-
       return @tarball_path # thus performs checksum verification
     end
 

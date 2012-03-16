@@ -29,7 +29,7 @@ describe MacOS do
     its(:xcode_prefix) { should be_a Pathname }
     its(:xcode_prefix) { should_not eq(Pathname('/')) }
     its(:xcode_installed?) { should_not be_nil }
-    its(:xcode_version) { should match(/(\d\.\d\.\d)|($unknown^)/) }
+    its(:xcode_version) { should match(/(\d\.\d?\.?\d)|(^unknown$)/) }
     its(:x11_installed?) { should_not be_nil }
     its(:macports_or_fink_installed?) { should_not be_nil }
   end

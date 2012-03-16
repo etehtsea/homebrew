@@ -20,25 +20,14 @@ module Homebrew extend self
     install_formulae ARGV.formulae
   end
 
-
-  def check_writable_install_location
-    if Homebrew.cellar.exists? and not Homebrew.cellar.writable?
-      raise "Cannot write to #{Homebrew.cellar}"
-    end
-    unless Homebrew.prefix.writable? or Homebrew.prefix.to_s == '/usr/local'
-      raise "Cannot write to #{Homebrew.prefix}"
-    end
-  end
-
   def perform_preinstall_checks
-    [:ppc, :writable_install_location, :cellar_exists].each do |check|
-      result = Doctor.send(check)
-      raise result unless result.nil? or result.empty?
+    [:ppc, :writable_install_location, :cellar_exists].each do |t|
+      check(t, true)
     end
 
-    Doctor.xcode_exists
-    Doctor.latest_xcode
-    Doctor.other_package_managers
+    [:xcode_exists, :latest_xcode, :other_package_managers].each do |t|
+      check(t)
+    end
   end
 
   def install_formulae formulae
@@ -54,6 +43,18 @@ module Homebrew extend self
         rescue CannotInstallFormulaError => e
           onoe e.message
         end
+      end
+    end
+  end
+
+private
+  def check(task, critical = false)
+    result = Doctor.send(task)
+    unless result.nil? or result.empty?
+      if critical
+        raise result
+      else
+        puts result
       end
     end
   end

@@ -7,12 +7,11 @@ module HomebrewEnvExtension
     delete('CDPATH')
     delete('GREP_OPTIONS') # can break CMake (lol)
     delete('CLICOLOR_FORCE') # autotools doesn't like this
-    remove_cc_etc
 
     # make any aclocal stuff installed in Homebrew available
-    ENV['ACLOCAL_PATH'] = "#{Homebrew.prefix}/share/aclocal" if MacOS.xcode_version < "4.3"
-
-    self['MAKEFLAGS'] = "-j#{self.make_jobs}"
+    if MacOS.xcode_version < "4.3"
+      ENV['ACLOCAL_PATH'] = "#{Homebrew.prefix}/share/aclocal"
+    end
 
     unless Homebrew.prefix.to_s == '/usr/local'
       # /usr/local is already an -isystem and -L directory so we skip it
@@ -22,25 +21,33 @@ module HomebrewEnvExtension
       self['CMAKE_PREFIX_PATH'] = "#{Homebrew.prefix}"
     end
 
-    # Os is the default Apple uses for all its stuff so let's trust them
-    set_cflags "-Os #{SAFE_CFLAGS_FLAGS}"
-
     # set us up for the user's compiler choice
-    self.send self.compiler
 
-    # we must have a working compiler!
-    unless ENV['CC']
-      @compiler = MacOS.default_compiler
-      self.send @compiler
-      ENV['CC']  = '/usr/bin/cc'
-      ENV['CXX'] = '/usr/bin/c++'
+    # TODO seems that ENV.clang in a Formula.install should warn when called
+    # if the user has set something that is tested here
+
+    # test for --flags first so that installs can be overridden on a per
+    # install basis. Then test for ENVs in inverse order to flags, this is
+    # sensible, trust me
+     if ARGV.include? '--use-gcc'
+      gcc
+    elsif ARGV.include? '--use-llvm'
+      llvm
+    elsif ARGV.include? '--use-clang'
+      clang
+    elsif (ENV['CC'] =~ /gcc/) || (ENV['CXX'] =~ /g\+\+/)
+      gcc
+    elsif (ENV['CC'] =~ /clang/) || (ENV['CXX'] =~ /clang\+\+/)
+      clang
+    elsif self['HOMEBREW_USE_CLANG']
+      clang
+    elsif self['HOMEBREW_USE_LLVM']
+      clang
+    elsif self['HOMEBREW_USE_GCC']
+      gcc
+    else
+      MacOS.default_compiler
     end
-
-    # In rare cases this may break your builds, as the tool for some reason wants
-    # to use a specific linker. However doing this in general causes formula to
-    # build more successfully because we are changing CC and many build systems
-    # don't react properly to that.
-    self['LD'] = self['CC']
   end
 
   def deparallelize
@@ -53,31 +60,37 @@ module HomebrewEnvExtension
     remove_from_cflags(/-O./)
     append_to_cflags '-fast'
   end
+
   def O4
     # LLVM link-time optimization
     remove_from_cflags(/-O./)
     append_to_cflags '-O4'
   end
+
   def O3
     # Sometimes O4 just takes fucking forever
     remove_from_cflags(/-O./)
     append_to_cflags '-O3'
   end
+
   def O2
     # Sometimes O3 doesn't work or produces bad binaries
     remove_from_cflags(/-O./)
     append_to_cflags '-O2'
   end
+
   def Os
     # Sometimes you just want a small one
     remove_from_cflags(/-O./)
     append_to_cflags '-Os'
   end
+
   def Og
     # Sometimes you want a debug build
     remove_from_cflags(/-O./)
     append_to_cflags '-g -O0'
   end
+
   def O1
     # Sometimes even O2 doesn't work :(
     remove_from_cflags(/-O./)
@@ -85,89 +98,50 @@ module HomebrewEnvExtension
   end
 
   def gcc_4_0_1
-    # we don't use xcrun because gcc 4.0 has not been provided since Xcode 4
-    self['CC'] =  "#{MacOS.dev_tools_path}/gcc-4.0"
-    self['CXX'] = "#{MacOS.dev_tools_path}/g++-4.0"
-    replace_in_cflags '-O4', '-O3'
-    set_cpu_cflags 'nocona -mssse3', :core => 'prescott', :bottle => 'generic'
-    @compiler = :gcc
-  end
-  alias_method :gcc_4_0, :gcc_4_0_1
-
-  def xcrun tool
-    if File.executable? "/usr/bin/#{tool}"
-      "/usr/bin/#{tool}"
-    elsif not MacOS.xctools_fucked? and system "/usr/bin/xcrun -find #{tool} 1>/dev/null 2>&1"
-      # xcrun was provided first with Xcode 4.3 and allows us to proxy
-      # tool usage thus avoiding various bugs
-      "/usr/bin/xcrun #{tool}"
-    else
-      # otherwise lets try and figure it out ourselves
-      fn = "#{MacOS.dev_tools_path}/#{tool}"
-      if File.executable? fn
-        fn
-      else
-        # This is for the use-case where xcode-select is not set up with
-        # Xcode 4.3. The tools in Xcode 4.3 are split over two locations,
-        # usually xcrun would figure that out for us, but it won't work if
-        # xcode-select is not configured properly.
-        fn = "#{MacOS.xcode_prefix}/Toolchains/XcodeDefault.xctoolchain/usr/bin/#{tool}"
-        if File.executable? fn
-          fn
-        else
-          nil
-        end
-      end
+    compiler(:gcc, 'gcc-4.0', 'g++-4.2') do
+      replace_in_cflags '-O4', '-O3'
+      set_cpu_cflags 'nocona -mssse3',
+        :core => 'prescott',
+        :bottle => 'generic'
     end
   end
-
-  # if your formula doesn't like CC having spaces use this
-  def expand_xcrun
-    ENV['CC'] =~ %r{/usr/bin/xcrun (.*)}
-    ENV['CC'] = `/usr/bin/xcrun -find #{$1}`.chomp if $1
-    ENV['CXX'] =~ %r{/usr/bin/xcrun (.*)}
-    ENV['CXX'] = `/usr/bin/xcrun -find #{$1}`.chomp if $1
-  end
+  alias_method :gcc_4_0, :gcc_4_0_1
 
   def gcc
     # Apple stopped shipping gcc-4.2 with Xcode 4.2
     # However they still provide a gcc symlink to llvm
     # But we don't want LLVM of course.
 
-    ENV['CC'] = xcrun "gcc-4.2"
-    ENV['CXX'] = xcrun "g++-4.2"
-
-    unless ENV['CC']
-      ENV['CC'] = "#{Homebrew.prefix}/bin/gcc-4.2"
-      ENV['CXX'] = "#{Homebrew.prefix}/bin/g++-4.2"
-      raise "GCC could not be found" if not File.exist? ENV['CC']
+    compiler(:gcc, 'gcc-4.2', 'g++-4.2') do
+      replace_in_cflags '-O4', '-O3'
+      set_cpu_cflags 'core2 -msse4',
+        :penryn => 'core2 -msse4.1',
+        :core2 => 'core2',
+        :core => 'prescott',
+        :bottle => 'generic'
     end
-
-    if not ENV['CC'] =~ %r{^/usr/bin/xcrun }
-      raise "GCC could not be found" if Pathname.new(ENV['CC']).realpath.to_s =~ /llvm/
-    end
-
-    replace_in_cflags '-O4', '-O3'
-    set_cpu_cflags 'core2 -msse4', :penryn => 'core2 -msse4.1', :core2 => 'core2', :core => 'prescott', :bottle => 'generic'
-    @compiler = :gcc
   end
   alias_method :gcc_4_2, :gcc
 
   def llvm
-    self['CC']  = xcrun "llvm-gcc"
-    self['CXX'] = xcrun "llvm-g++"
-    set_cpu_cflags 'core2 -msse4', :penryn => 'core2 -msse4.1', :core2 => 'core2', :core => 'prescott'
-    @compiler = :llvm
+    compiler(:llvm, 'llvm-gcc', 'llvm-g++') do
+      set_cpu_cflags 'core2 -msse4',
+        :penryn => 'core2 -msse4.1',
+        :core2 => 'core2',
+        :core => 'prescott'
+    end
   end
 
   def clang
-    self['CC']  = xcrun "clang"
-    self['CXX'] = xcrun "clang++"
-    replace_in_cflags(/-Xarch_i386 (-march=\S*)/, '\1')
-    # Clang mistakenly enables AES-NI on plain Nehalem
-    set_cpu_cflags 'native', :nehalem => 'native -Xclang -target-feature -Xclang -aes'
-    append_to_cflags '-Qunused-arguments'
-    @compiler = :clang
+    compiler(:clang, 'clang', 'clang++') do
+      replace_in_cflags(/-Xarch_i386 (-march=\S*)/, '\1')
+
+      # Clang mistakenly enables AES-NI on plain Nehalem
+      set_cpu_cflags 'native',
+        :nehalem => 'native -Xclang -target-feature -Xclang -aes'
+
+      append_to_cflags '-Qunused-arguments'
+    end
   end
 
   def fortran
@@ -180,10 +154,14 @@ module HomebrewEnvExtension
         flags_to_set << 'FCFLAGS' unless self['FCFLAGS']
         flags_to_set << 'FFLAGS' unless self['FFLAGS']
 
-        flags_to_set.each {|key| self[key] = cflags}
+        flags_to_set.each { |key| self[key] = cflags }
 
         # Ensure we use architecture optimizations for GCC 4.2.x
-        set_cpu_flags flags_to_set, 'core2 -msse4', :penryn => 'core2 -msse4.1', :core2 => 'core2', :core => 'prescott', :bottle => 'generic'
+        set_cpu_flags flags_to_set, 'core2 -msse4',
+          :penryn => 'core2 -msse4.1',
+          :core2 => 'core2',
+          :core => 'prescott',
+          :bottle => 'generic'
       elsif not self['FCFLAGS'] or self['FFLAGS']
         opoo <<-EOS.undent
         No Fortran optimization information was provided.  You may want to consider
@@ -205,8 +183,11 @@ module HomebrewEnvExtension
 
       fc_flag_vars.each {|key| self[key] = cflags}
       # Ensure we use architecture optimizations for GCC 4.2.x
-      set_cpu_flags fc_flag_vars, 'core2 -msse4', :penryn => 'core2 -msse4.1', :core2 => 'core2', :core => 'prescott', :bottle => 'generic'
-
+      set_cpu_flags fc_flag_vars, 'core2 -msse4',
+        :penryn => 'core2 -msse4.1',
+        :core2 => 'core2',
+        :core => 'prescott',
+        :bottle => 'generic'
     else
       onoe <<-EOS.undnet
       This formula requires a fortran compiler, but we could not find one by
@@ -240,6 +221,7 @@ module HomebrewEnvExtension
   def minimal_optimization
     self['CFLAGS'] = self['CXXFLAGS'] = "-Os #{SAFE_CFLAGS_FLAGS}"
   end
+
   def no_optimization
     self['CFLAGS'] = self['CXXFLAGS'] = SAFE_CFLAGS_FLAGS
   end
@@ -250,7 +232,7 @@ module HomebrewEnvExtension
   end
 
   def x11
-    opoo "You do not have X11 installed, this formula may not build." if not MacOS.x11_installed?
+    opoo "You do not have X11 installed, this formula may not build." unless MacOS.x11_installed?
 
     # There are some config scripts (e.g. freetype) here that should go in the path
     prepend 'PATH', '/usr/X11/bin', ':'
@@ -279,13 +261,14 @@ module HomebrewEnvExtension
   def cxx;     self['CXX'] or "g++"; end
   def cflags;  self['CFLAGS'];       end
   def cxxflags;self['CXXFLAGS'];     end
-  def cppflags;self['CPPFLAGS'];      end
+  def cppflags;self['CPPFLAGS'];     end
   def ldflags; self['LDFLAGS'];      end
 
   # Shortcuts for lists of common flags
   def cc_flag_vars
     %w{CFLAGS CXXFLAGS OBJCFLAGS OBJCXXFLAGS}
   end
+
   def fc_flag_vars
     %w{FCFLAGS FFLAGS}
   end
@@ -306,7 +289,7 @@ module HomebrewEnvExtension
     replace_in_cflags '-O4', '-O3' # O4 seems to cause the build to fail
     append 'LDFLAGS', '-arch i386 -arch x86_64'
 
-    unless compiler == :clang
+    unless @compiler == :clang
       # Can't mix "-march" for a 32-bit CPU  with "-arch x86_64"
       replace_in_cflags(/-march=\S*/, '-Xarch_i386 \0') if Hardware.is_32_bit?
     end
@@ -362,9 +345,7 @@ module HomebrewEnvExtension
 
   # Convenience method to set all C compiler flags in one shot.
   def set_cflags f
-    cc_flag_vars.each do |key|
-      self[key] = f
-    end
+    cc_flag_vars.each { |key| self[key] = f }
   end
 
   # Sets architecture-specific flags for every environment variable
@@ -393,31 +374,6 @@ module HomebrewEnvExtension
     set_cpu_flags cc_flag_vars, default, map
   end
 
-  # actually c-compiler, so cc would be a better name
-  def compiler
-    # TODO seems that ENV.clang in a Formula.install should warn when called
-    # if the user has set something that is tested here
-
-    # test for --flags first so that installs can be overridden on a per
-    # install basis. Then test for ENVs in inverse order to flags, this is
-    # sensible, trust me
-    @compiler ||= if ARGV.include? '--use-gcc'
-      :gcc
-    elsif ARGV.include? '--use-llvm'
-      :llvm
-    elsif ARGV.include? '--use-clang'
-      :clang
-    elsif self['HOMEBREW_USE_CLANG']
-      :clang
-    elsif self['HOMEBREW_USE_LLVM']
-      :llvm
-    elsif self['HOMEBREW_USE_GCC']
-      :gcc
-    else
-      MacOS.default_compiler
-    end
-  end
-
   def make_jobs
     # '-j' requires a positive integral argument
     if self['HOMEBREW_MAKE_JOBS'].to_i > 0
@@ -427,12 +383,27 @@ module HomebrewEnvExtension
     end
   end
 
-  def remove_cc_etc
-    keys = %w{CC CXX LD CPP CFLAGS CXXFLAGS OBJCFLAGS OBJCXXFLAGS LDFLAGS CPPFLAGS}
-    removed = Hash[*keys.map{ |key| [key, ENV[key]] }.flatten]
-    keys.each do |key|
-      ENV[key] = nil
+  private
+
+  def compiler(cf, cc, cxx, *flags)
+    self['MAKEFLAGS'] = "-j#{make_jobs}" unless self['MAKEFLAGS']
+    self['CC'] = cc unless self['CC']
+    self['CXX'] = cxx unless self['CXX']
+
+    unless self['CFLAGS']
+      # Os is the default Apple uses for all its stuff so let's trust them
+      set_cflags "-Os #{SAFE_CFLAGS_FLAGS}"
+      yield if block_given?
     end
-    removed
+
+    @compiler = cf
+
+    # In rare cases this may break your builds, as the tool for some reason wants
+    # to use a specific linker. However doing this in general causes formula to
+    # build more successfully because we are changing CC and many build systems
+    # don't react properly to that.
+    self['LD'] = self['CC']
+
+    self['CXXFLAGS'] = self['CFLAGS'] unless self['CXXFLAGS']
   end
 end

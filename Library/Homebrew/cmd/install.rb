@@ -1,5 +1,6 @@
 require 'formula_installer'
 require 'blacklist'
+require 'doctor'
 
 module Homebrew extend self
   def install
@@ -19,59 +20,14 @@ module Homebrew extend self
     install_formulae ARGV.formulae
   end
 
-  def check_ppc
-    case Hardware.cpu_type when :ppc, :dunno
-      abort <<-EOS.undent
-        Sorry, Homebrew does not support your computer's CPU architecture.
-        For PPC support, see: http://github.com/sceaga/homebrew/tree/powerpc
-        EOS
-    end
-  end
-
-  def check_writable_install_location
-    raise "Cannot write to #{Homebrew.cellar}" if Homebrew.cellar.exist? and not Homebrew.cellar.writable?
-    raise "Cannot write to #{Homebrew.prefix}" unless Homebrew.prefix.writable? or Homebrew.prefix.to_s == '/usr/local'
-  end
-
-  def check_cc
-    if MacOS.snow_leopard?
-      if MacOS.llvm_build_version < Homebrew.recommended_llvm
-        opoo "You should upgrade to Xcode 3.2.6"
-      end
-    else
-      if (MacOS.gcc_40_build_version < Homebrew.recommended_gcc_40) or (MacOS.gcc_42_build_version < Homebrew.recommended_gcc_42)
-        opoo "You should upgrade to Xcode 3.1.4"
-      end
-    end
-  rescue
-    # the reason we don't abort is some formula don't require Xcode
-    # TODO allow formula to declare themselves as "not needing Xcode"
-    opoo "Xcode is not installed! Builds may fail!"
-  end
-
-  def check_macports
-    if MacOS.macports_or_fink_installed?
-      opoo "It appears you have MacPorts or Fink installed."
-      puts "Software installed with other package managers causes known problems for"
-      puts "Homebrew. If a formula fails to build, uninstall MacPorts/Fink and try again."
-    end
-  end
-
-  def check_cellar
-    FileUtils.mkdir_p Homebrew.cellar if not File.exist? Homebrew.cellar
-  rescue
-    raise <<-EOS.undent
-      Could not create #{Homebrew.cellar}
-      Check you have permission to write to #{Homebrew.cellar.parent}
-    EOS
-  end
-
   def perform_preinstall_checks
-    check_ppc
-    check_writable_install_location
-    check_cc
-    check_macports
-    check_cellar
+    [:ppc, :writable_install_location, :cellar_exists].each do |t|
+      check(t, true)
+    end
+
+    [:xcode_exists, :latest_xcode, :other_package_managers].each do |t|
+      check(t)
+    end
   end
 
   def install_formulae formulae
@@ -91,4 +47,15 @@ module Homebrew extend self
     end
   end
 
+private
+  def check(task, critical = false)
+    result = Doctor.send(task)
+    unless result.nil? or result.empty?
+      if critical
+        raise result
+      else
+        opoo result
+      end
+    end
+  end
 end

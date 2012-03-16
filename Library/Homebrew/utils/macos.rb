@@ -36,19 +36,7 @@ module Utils
             :clang
           end
       end
-
-      def build_version(cc)
-        if Unix.available?(cc)
-          regexp = case cc
-                   when /gcc/  ; /build (\d{4,})/
-                   when /llvm/ ; /LLVM build (\d{4,})/
-                   when /clang/; %r[tags/Apple/clang-(\d{2,})]
-                   end
-          `#{cc} --version 2>/dev/null` =~ regexp
-          $1.to_i if $?.success?
-        end
-      end
-
+u
       def gcc_42_build_version
         @@gcc_42_build_version ||= build_version('gcc-4.2')
       end
@@ -90,6 +78,10 @@ module Utils
             # checking xcode version
             'unknown'
           end
+      end
+
+      def xcode_installed?
+        !!(Unix.available?('xcrun') && File.exist?(`xcrun -find xcodebuild`.strip))
       end
 
       def x11_installed?
@@ -146,6 +138,19 @@ module Utils
 
       def prefer_64_bit?
         Hardware.is_64_bit? and not leopard?
+      end
+
+    private
+      def build_version(cc)
+        if Unix.available?(cc)
+          regexp = case cc
+                   when /gcc/  ; /build (\d{4,})/
+                   when /llvm/ ; /LLVM build (\d{4,})/
+                   when /clang/; %r[tags/Apple/clang-(\d{2,})]
+                   end
+          `#{cc} --version 2>/dev/null` =~ regexp
+          $1.to_i if $?.success?
+        end
       end
     end
   end

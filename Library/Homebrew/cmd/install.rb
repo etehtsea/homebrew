@@ -1,5 +1,6 @@
 require 'formula_installer'
 require 'blacklist'
+require 'doctor'
 
 module Homebrew extend self
   def install
@@ -19,60 +20,25 @@ module Homebrew extend self
     install_formulae ARGV.formulae
   end
 
-  def check_ppc
-    case Hardware.cpu_type when :ppc, :dunno
-      abort <<-EOS.undent
-        Sorry, Homebrew does not support your computer's CPU architecture.
-        For PPC support, see: http://github.com/sceaga/homebrew/tree/powerpc
-        EOS
-    end
-  end
 
   def check_writable_install_location
-    raise "Cannot write to #{Homebrew.cellar}" if Homebrew.cellar.exist? and not Homebrew.cellar.writable?
-    raise "Cannot write to #{Homebrew.prefix}" unless Homebrew.prefix.writable? or Homebrew.prefix.to_s == '/usr/local'
-  end
-
-  def check_cc
-    if MacOS.xcode_version == 'unknown'
-      # the reason we don't abort is some formula don't require Xcode
-      # TODO allow formula to declare themselves as "not needing Xcode"
-      opoo "Xcode is not installed! Builds may fail!"
+    if Homebrew.cellar.exists? and not Homebrew.cellar.writable?
+      raise "Cannot write to #{Homebrew.cellar}"
     end
-
-    case MacOS.cat
-    when :lion
-      opoo "You should upgrade to Xcode > 4.3" if MacOS.xcode_version < '4.3'
-    when :snowleopard
-      opoo "You should upgrade to Xcode 3.2.6" if MacOS.xcode_version < '3.2.6'
-    when :leopard
-      opoo "You should upgrade to Xcode 3.1.4" if MacOS.xcode_version < '3.1.4'
+    unless Homebrew.prefix.writable? or Homebrew.prefix.to_s == '/usr/local'
+      raise "Cannot write to #{Homebrew.prefix}"
     end
-  end
-
-  def check_macports
-    if MacOS.macports_or_fink_installed?
-      opoo "It appears you have MacPorts or Fink installed."
-      puts "Software installed with other package managers causes known problems for"
-      puts "Homebrew. If a formula fails to build, uninstall MacPorts/Fink and try again."
-    end
-  end
-
-  def check_cellar
-    FileUtils.mkdir_p Homebrew.cellar if not File.exist? Homebrew.cellar
-  rescue
-    raise <<-EOS.undent
-      Could not create #{Homebrew.cellar}
-      Check you have permission to write to #{Homebrew.cellar.parent}
-    EOS
   end
 
   def perform_preinstall_checks
-    check_ppc
-    check_writable_install_location
-    check_cc
-    check_macports
-    check_cellar
+    [:ppc, :writable_install_location, :cellar_exists].each do |check|
+      result = Doctor.send(check)
+      raise result unless result.nil? or result.empty?
+    end
+
+    Doctor.xcode_exists
+    Doctor.latest_xcode
+    Doctor.other_package_managers
   end
 
   def install_formulae formulae
@@ -91,5 +57,4 @@ module Homebrew extend self
       end
     end
   end
-
 end

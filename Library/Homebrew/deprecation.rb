@@ -39,3 +39,21 @@ def Object.const_missing(name)
     super
   end
 end
+
+module Homebrew
+  module Env
+    ### Minimal compatible version ###
+
+    def osx_10_4
+      self['MACOSX_DEPLOYMENT_TARGET'] = "10.4"
+      remove_from_cflags(/ ?-mmacosx-version-min=10\.\d/)
+      append_to_cflags('-mmacosx-version-min=10.4')
+    end
+
+    def osx_10_5
+      self['MACOSX_DEPLOYMENT_TARGET'] = "10.5"
+      remove_from_cflags(/ ?-mmacosx-version-min=10\.\d/)
+      append_to_cflags('-mmacosx-version-min=10.5')
+    end
+  end
+end

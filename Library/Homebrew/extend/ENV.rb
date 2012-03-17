@@ -51,6 +51,9 @@ module Homebrew
       end
     end
 
+
+    ### Optimizations ###
+
     def deparallelize
       remove 'MAKEFLAGS', /-j\d+/
     end
@@ -98,8 +101,19 @@ module Homebrew
       append_to_cflags '-O1'
     end
 
+    def minimal_optimization
+      self['CFLAGS'] = self['CXXFLAGS'] = "-Os #{SAFE_CFLAGS_FLAGS}"
+    end
+
+    def no_optimization
+      self['CFLAGS'] = self['CXXFLAGS'] = SAFE_CFLAGS_FLAGS
+    end
+
+
+    ### Compilers ###
+
     def gcc_4_0_1
-      compiler(:gcc, 'gcc-4.0', 'g++-4.2') do
+      compiler(:gcc, 'gcc-4.0', 'g++-4.0') do
         replace_in_cflags '-O4', '-O3'
         set_cpu_cflags 'nocona -mssse3',
           :core => 'prescott',
@@ -207,25 +221,8 @@ module Homebrew
       end
     end
 
-    def osx_10_4
-      self['MACOSX_DEPLOYMENT_TARGET']="10.4"
-      remove_from_cflags(/ ?-mmacosx-version-min=10\.\d/)
-      append_to_cflags('-mmacosx-version-min=10.4')
-    end
 
-    def osx_10_5
-      self['MACOSX_DEPLOYMENT_TARGET']="10.5"
-      remove_from_cflags(/ ?-mmacosx-version-min=10\.\d/)
-      append_to_cflags('-mmacosx-version-min=10.5')
-    end
-
-    def minimal_optimization
-      self['CFLAGS'] = self['CXXFLAGS'] = "-Os #{SAFE_CFLAGS_FLAGS}"
-    end
-
-    def no_optimization
-      self['CFLAGS'] = self['CXXFLAGS'] = SAFE_CFLAGS_FLAGS
-    end
+    ### Other ###
 
     # Some configure scripts won't find libxml2 without help
     def libxml2
@@ -264,15 +261,6 @@ module Homebrew
     def cxxflags;self['CXXFLAGS'];     end
     def cppflags;self['CPPFLAGS'];     end
     def ldflags; self['LDFLAGS'];      end
-
-    # Shortcuts for lists of common flags
-    def cc_flag_vars
-      %w{CFLAGS CXXFLAGS OBJCFLAGS OBJCXXFLAGS}
-    end
-
-    def fc_flag_vars
-      %w{FCFLAGS FFLAGS}
-    end
 
     def m64
       append_to_cflags '-m64'
@@ -344,6 +332,26 @@ module Homebrew
       end
     end
 
+    def make_jobs
+      # '-j' requires a positive integral argument
+      if self['HOMEBREW_MAKE_JOBS'].to_i > 0
+        self['HOMEBREW_MAKE_JOBS']
+      else
+        Hardware.processor_count
+      end
+    end
+
+  private
+
+    # Shortcuts for lists of common flags
+    def cc_flag_vars
+      %w{CFLAGS CXXFLAGS OBJCFLAGS OBJCXXFLAGS}
+    end
+
+    def fc_flag_vars
+      %w{FCFLAGS FFLAGS}
+    end
+
     # Convenience method to set all C compiler flags in one shot.
     def set_cflags f
       cc_flag_vars.each { |key| self[key] = f }
@@ -374,17 +382,6 @@ module Homebrew
     def set_cpu_cflags default, map = {}
       set_cpu_flags cc_flag_vars, default, map
     end
-
-    def make_jobs
-      # '-j' requires a positive integral argument
-      if self['HOMEBREW_MAKE_JOBS'].to_i > 0
-        self['HOMEBREW_MAKE_JOBS']
-      else
-        Hardware.processor_count
-      end
-    end
-
-    private
 
     def compiler(cf, cc, cxx, *flags)
       self['MAKEFLAGS'] = "-j#{make_jobs}" unless self['MAKEFLAGS']

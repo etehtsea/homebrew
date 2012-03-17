@@ -109,7 +109,10 @@ describe ENV do
 
   context "respects flags set manually in the env" do
     before do
-      ENV.clear
+      ['CC', 'CXX', 'CFLAGS', 'MAKEJOBS', 'CXXFLAGS'].each do |flag|
+        ENV.delete(flag)
+      end
+
       ENV['CC']  = 'gcc-4.7'
       ENV['CXX'] = 'g++-4.7'
       ENV['CFLAGS'] = '-w -pipe -march=native -fomit-frame-pointer'

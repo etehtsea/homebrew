@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'homebrew'
 
 describe MacOS do
   its(:full_version) { should match(/^10\.[5-9]\.\d{1,2}$/) }

@@ -2,7 +2,7 @@ require 'testing_env'
 require 'utils'
 require 'extend/ENV'
 require 'extend/ARGV'
-ENV.extend(HomebrewEnvExtension)
+ENV.extend(Homebrew::Env)
 ARGV.extend(HomebrewArgvExtension)
 
 class EnvironmentTests < Test::Unit::TestCase

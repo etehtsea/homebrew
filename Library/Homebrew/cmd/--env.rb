@@ -2,7 +2,7 @@ require 'extend/ENV'
 
 module Homebrew extend self
   def __env
-    ENV.extend(HomebrewEnvExtension)
+    ENV.extend(Homebrew::Env)
     ENV.setup_build_environment
     ENV.universal_binary if ARGV.build_universal?
     if $stdout.tty?

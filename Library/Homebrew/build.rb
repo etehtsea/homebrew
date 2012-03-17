@@ -18,7 +18,7 @@ at_exit do
     require 'extend/ENV'
     require 'keg'
 
-    ENV.extend(HomebrewEnvExtension)
+    ENV.extend(Homebrew::Env)
     ENV.setup_build_environment
     # we must do this or tools like pkg-config won't get found by configure scripts etc.
     ENV.prepend 'PATH', "#{Homebrew.prefix}/bin", ':' unless ORIGINAL_PATHS.include? "#{Homebrew.prefix}/bin"

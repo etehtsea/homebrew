@@ -1,8 +1,8 @@
 require 'extend/ENV'
-require 'hardware'
+require 'utils/hardware'
 require 'keg'
 
-ENV.extend(HomebrewEnvExtension)
+ENV.extend(Homebrew::Env)
 ENV.setup_build_environment
 
 module Homebrew extend self

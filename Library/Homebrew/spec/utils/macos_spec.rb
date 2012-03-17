@@ -1,7 +1,5 @@
 require 'spec_helper'
 require 'homebrew'
-require 'extend/ARGV'
-ARGV.extend(HomebrewArgvExtension)
 
 describe MacOS do
   its(:full_version) { should match(/^10\.[5-9]\.\d{1,2}$/) }

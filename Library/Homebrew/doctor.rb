@@ -843,6 +843,26 @@ module Doctor
         end
       end
 
+      def check_os_version
+        if MacOS.full_version =~ /^10\.6(\.|$)/
+          unless (MacOS.full_version == "10.6.8")
+            return <<-EOS.undent
+              Please update Snow Leopard.
+              10.6.8 is the supported version of Snow Leopard.
+              You are still running #{MacOS.full_version}.
+            EOS
+          end
+        elsif MacOS.full_version =~ /^10\.5(\.|$)/
+          unless (MacOS.full_version == "10.5.8")
+            return <<-EOS.undent
+              Please update Leopard.
+              10.5.8 is the supported version of Leopard.
+              You are still running #{MacOS.full_version}.
+            EOS
+          end
+        end
+      end
+
       def ppc
         case Hardware.cpu_type
         when :ppc, :dunno

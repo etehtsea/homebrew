@@ -3,7 +3,8 @@ require 'dependencies'
 require 'formula_support'
 require 'extend/fileutils'
 
-# Derive and define at least @url, see Library/Formula for examples
+# Derive and define at least @url, see /usr/local/formulary/main/Formula
+# for examples
 class Formula
   include FileUtils
 
@@ -248,7 +249,7 @@ class Formula
 
   # an array of all Formula names
   def self.names
-    Dir["#{Homebrew.repository}/Library/Formula/*.rb"].map{ |f| File.basename f, '.rb' }.sort
+    Dir["#{Homebrew.formularies_path}/**/*.rb"].map{ |f| File.basename f, '.rb' }.sort
   end
 
   # an array of all Formula, instantiated
@@ -276,26 +277,20 @@ class Formula
   end
 
   def self.aliases
-    Dir["#{Homebrew.repository}/Library/Aliases/*"].map{ |f| File.basename f }.sort
+    Dir["#{Homebrew.formularies_path}/**/Aliases/*"].map{ |f| File.basename f }.sort
   end
 
   def self.canonical_name name
     # Cast pathnames to strings.
     name = name.to_s if name.kind_of? Pathname
 
-    formula_with_that_name = Homebrew.repository + "Library/Formula/#{name}.rb"
-    possible_alias = Homebrew.repository + "Library/Aliases/#{name}"
-    possible_cached_formula = Homebrew.cache_formula + "#{name}.rb"
+    formula = path(name)
 
     if name.include? "/"
       # Don't resolve paths or URLs
       name
-    elsif formula_with_that_name.file? and formula_with_that_name.readable?
-      name
-    elsif possible_alias.file?
-      possible_alias.realpath.basename('.rb').to_s
-    elsif possible_cached_formula.file?
-      possible_cached_formula.to_s
+    elsif formula.file?
+      formula.realpath.basename('.rb').to_s
     else
       name
     end
@@ -354,8 +349,23 @@ class Formula
     raise FormulaUnavailableError.new(name)
   end
 
-  def self.path name
-    Homebrew.repository + "Library/Formula/#{name.downcase}.rb"
+  def self.path(name)
+    name = name.downcase
+
+    aliases  = Dir["#{Homebrew.formularies_path}/**/Aliases/#{name}"]
+    formulas =  Dir["#{Homebrew.formularies_path}/**/#{name}.rb"]
+    cached_formula = Homebrew.cache_formula + "#{name}.rb"
+
+    if aliases.any?
+      Pathname(aliases.last)
+    elsif formulas.any?
+      Pathname(formulas.last)
+    elsif cached_formula.file?
+      cached_formula
+    else
+      # FIXME: added for compatibility
+      Pathname(Homebrew.formularies_path + "main/Formula/#{name}")
+    end
   end
 
   def mirrors;       self.class.mirrors or []; end

@@ -2,11 +2,13 @@ require 'updater'
 
 module Homebrew extend self
   def repoupdate
-    Updater.new do |u|
-      u.title      = 'Formulary'
-      u.repo_url   = 'https://github.com/etehtsea/formulary.git'
-      u.repo_dir   = Homebrew.formulary
-      u.track_dir  = 'Formula/'
+    formularies.each do |name, settings|
+      Updater.new do |u|
+        u.title      = name
+        u.repo_url   = settings['url']
+        u.repo_dir   = Homebrew.formularies_path + settings['path']
+        u.track_dir  = settings['track_dir']
+      end
     end
   end
 end

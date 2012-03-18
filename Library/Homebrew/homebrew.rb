@@ -6,6 +6,7 @@ require 'extend/string'
 require 'utils'
 require 'exceptions'
 require 'fileutils'
+require 'yaml'
 
 include Utils
 
@@ -58,8 +59,12 @@ module Homebrew
       @@repository ||= Pathname.new(brew_file).realpath.dirname.parent
     end
 
-    def formulary
-      @@formulary ||= repository + Pathname.new('Library')
+    def formularies_path
+      @@formulary ||= prefix + 'formulary'
+    end
+
+    def formularies
+      @@formularies ||= YAML.load_file("#{repository}/Library/Homebrew/formularies.yml")
     end
 
     # Where we store built products; /usr/local/Cellar if it exists,

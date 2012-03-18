@@ -1,4 +1,5 @@
-require 'git'
+require 'utils/git'
+
 module Homebrew extend self
   def log
     if ARGV.named.empty?

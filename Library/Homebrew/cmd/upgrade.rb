@@ -1,4 +1,5 @@
 require 'cmd/outdated'
+require 'cmd/install'
 require 'doctor'
 
 class Fixnum

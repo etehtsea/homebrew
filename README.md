@@ -15,11 +15,11 @@ Fork's TODO-List:
       an API that could be used by other application (GUI, for example);
   *   **(done)** *Extract 'Contributions' to 'homebrew-contrib'
       [repo][contrib]*. 'Contributions' is now available through the `brew install homebrew-contrib`;
-2. *Improve tests*. You need to install `rspec` to run new tests;
-3. *3rd party formulas repos support*;
+2. **(In progress)** *Improve tests*. You need to install `rspec` to run new tests;
+3. **(In progress)** *3rd party formulas repos support*;
 4. **(partially done)** *Use rugged (or another ruby-git library)*;
 5. *Improve core documentation*;
-6. *Fix ccache support*;
+6. **(done)** *Fix ccache support*;
 
 What Packages Are Available?
 ----------------------------

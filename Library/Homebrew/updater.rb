@@ -39,6 +39,7 @@ class Updater
   # Performs an update of the homebrew source. Returns +true+ if a newer
   # version was available, +false+ if already up-to-date.
   def update!
+    @repo_dir.mkdir unless @repo_dir.directory?
     repo = Git::Repo.new(@repo_dir, @repo_url)
 
     if repo.exists?

@@ -1,16 +1,24 @@
 class Updater
   attr_accessor :title, :repo_url, :repo_dir, :track_dir
 
-  def initialize(*args)
+  def initialize(name = nil)
+    if name
+      @repo_url = "https://github.com/#{name}.git"
+      dir = name.split('/').last
+      @repo_dir = Formulary.path + dir
+      @title    = "#{dir.capitalize} formulary"
+      @track_dir = 'Formula/'
+    end
+
     if block_given?
       yield self
+    end
 
-      oh1 title
-      if update!
-        report
-      else
-        puts "Already up-to-date."
-      end
+    oh1 title
+    if update!
+      report
+    else
+      puts "Already up-to-date."
     end
   end
 

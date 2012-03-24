@@ -59,14 +59,6 @@ module Homebrew
       @@repository ||= Pathname.new(brew_file).realpath.dirname.parent
     end
 
-    def formularies_path
-      @@formulary ||= prefix + 'formulary'
-    end
-
-    def formularies
-      @@formularies ||= YAML.load_file("#{repository}/Library/Homebrew/formularies.yml")
-    end
-
     # Where we store built products; /usr/local/Cellar if it exists,
     # otherwise a Cellar relative to the Repository.
     def cellar

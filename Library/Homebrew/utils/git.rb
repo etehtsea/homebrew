@@ -23,6 +23,10 @@ module Utils
         Dir.chdir(dir)
       end
 
+      def config(option)
+        `git config --local #{option}`.strip
+      end
+
       def branch
         `git branch`.chomp
       end

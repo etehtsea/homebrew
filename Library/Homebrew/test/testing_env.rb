@@ -28,7 +28,7 @@ module MacOS
   def self.version; 10.6; end
 end
 
-(Homebrew.formularies_path + 'main/Formula').mkpath
+(Homebrew.formulary + 'main/Formula').mkpath
 Dir.chdir Homebrew.prefix
 at_exit { Homebrew.prefix.parent.rmtree }
 

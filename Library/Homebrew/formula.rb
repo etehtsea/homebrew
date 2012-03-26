@@ -249,7 +249,7 @@ class Formula
 
   # an array of all Formula names
   def self.names
-    Dir["#{Homebrew.formularies_path}/**/*.rb"].map{ |f| File.basename f, '.rb' }.sort
+    Dir["#{Homebrew.formulary}/**/*.rb"].map{ |f| File.basename f, '.rb' }.sort
   end
 
   # an array of all Formula, instantiated
@@ -277,7 +277,7 @@ class Formula
   end
 
   def self.aliases
-    Dir["#{Homebrew.formularies_path}/**/Aliases/*"].map{ |f| File.basename f }.sort
+    Dir["#{Homebrew.formulary}/**/Aliases/*"].map{ |f| File.basename f }.sort
   end
 
   def self.canonical_name name
@@ -352,8 +352,8 @@ class Formula
   def self.path(name)
     name = name.downcase
 
-    aliases  = Dir["#{Homebrew.formularies_path}/**/Aliases/#{name}"]
-    formulas =  Dir["#{Homebrew.formularies_path}/**/#{name}.rb"]
+    aliases  = Dir["#{Homebrew.formulary}/**/Aliases/#{name}"]
+    formulas =  Dir["#{Homebrew.formulary}/**/#{name}.rb"]
     cached_formula = Homebrew.cache_formula + "#{name}.rb"
 
     if aliases.any?
@@ -364,7 +364,7 @@ class Formula
       cached_formula
     else
       # FIXME: added for compatibility
-      Pathname(Homebrew.formularies_path + "main/Formula/#{name}")
+      Pathname(Homebrew.formulary + "main/Formula/#{name}")
     end
   end
 

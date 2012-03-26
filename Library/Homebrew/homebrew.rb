@@ -59,6 +59,10 @@ module Homebrew
       @@repository ||= Pathname.new(brew_file).realpath.dirname.parent
     end
 
+    def formulary
+      @@formulary ||= prefix + 'formulary'
+    end
+
     # Where we store built products; /usr/local/Cellar if it exists,
     # otherwise a Cellar relative to the Repository.
     def cellar

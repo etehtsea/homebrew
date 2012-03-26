@@ -46,9 +46,9 @@ class BeerTasting < Test::Unit::TestCase
     path=Formula.path(FOOBAR)
 
     assert_equal "FooBar", classname
-    assert_match Regexp.new("^#{Homebrew.formularies_path}/main/Formula"), path.to_s
+    assert_match Regexp.new("^#{Homebrew.formulary}/main/Formula"), path.to_s
 
-    path=Homebrew.formularies_path+"main/Formula/#{FOOBAR}.rb"
+    path=Homebrew.formulary+"main/Formula/#{FOOBAR}.rb"
     path.dirname.mkpath
     File.open(path, 'w') do |f|
       f << %{

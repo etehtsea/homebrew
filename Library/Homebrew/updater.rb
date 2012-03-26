@@ -1,5 +1,5 @@
 class Updater
-  attr_accessor :title, :repo_url, :repo_dir, :track_dir
+  attr_accessor :title, :repo_url, :repo_dir, :filter
 
   def initialize(name = nil)
     if name
@@ -7,7 +7,7 @@ class Updater
       dir = name.split('/').last
       @repo_dir = Formulary.path + dir
       @title    = "#{dir.capitalize} formulary"
-      @track_dir = 'Formula/'
+      @filter = /\.rb$/
     end
 
     if block_given?
@@ -74,9 +74,9 @@ class Updater
       end
 
       if @changes_map.any?
-        @changes = { 'New'     => changed_items('A', @track_dir),
-                     'Updated' => changed_items('M', @track_dir),
-                     'Deleted' => changed_items('D', @track_dir) }
+        @changes = { 'New'     => changed_items('A', @filter),
+                     'Updated' => changed_items('M', @filter),
+                     'Deleted' => changed_items('D', @filter) }
         return true
       end
     end
@@ -85,15 +85,15 @@ class Updater
     return false
   end
 
-  def filter_by_directory(files, dir)
-    files.select { |f| f.index(dir) == 0 }
+  def filter(files, regexp)
+    files.select { |f| !(f.index(regexp).nil?) }
   end
 
   def basenames(files)
     files.map { |f| File.basename(f, '.rb') }
   end
 
-  def changed_items(status, dir)
-    basenames(filter_by_directory(@changes_map[status], dir)).sort
+  def changed_items(status, regexp)
+    basenames(filter(@changes_map[status], regexp)).sort
   end
 end

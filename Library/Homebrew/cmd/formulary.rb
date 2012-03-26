@@ -11,6 +11,8 @@ module Homebrew
         Formulary.add(ARGV.last)
       when 'remove'
         Formulary.remove(ARGV.last)
+      when 'init'
+        Formulary.init
       end
     end
   end

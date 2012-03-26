@@ -5,27 +5,6 @@ module Homebrew
         puts config_s
       end
 
-    private
-
-      def sha
-        sha = Git::Repo.new(Homebrew.repository).head
-        sha.empty? ? "(none)" : sha
-      end
-
-      def describe(interpreter)
-        path = Pathname(Unix.which(interpreter))
-
-        if path.exist?
-          path.symlink? ? "#{path} => #{real_path(path)}" : path
-        else
-          "N/A"
-        end
-      end
-
-      def real_path(a_path)
-        Pathname(a_path).realpath
-      end
-
       def config_s; <<-EOS.undent
         HOMEBREW_VERSION: #{Homebrew.version}
         HEAD: #{sha}
@@ -47,6 +26,27 @@ module Homebrew
         Which Python: #{describe('python')}
         Which Ruby:   #{describe('ruby')}
         EOS
+      end
+
+    private
+
+      def sha
+        sha = Git::Repo.new(Homebrew.repository).head
+        sha.empty? ? "(none)" : sha
+      end
+
+      def describe(interpreter)
+        path = Pathname(Unix.which(interpreter))
+
+        if path.exist?
+          path.symlink? ? "#{path} => #{real_path(path)}" : path
+        else
+          "N/A"
+        end
+      end
+
+      def real_path(a_path)
+        Pathname(a_path).realpath
       end
     end
   end

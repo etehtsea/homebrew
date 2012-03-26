@@ -19,8 +19,7 @@ module Formulary
     def init
       create unless exists?
 
-      default_repo = 'etehtsea/formulary'
-      u = Updater.new(default_repo)
+      u = Updater.new('etehtsea/formulary')
       Git::Repo.new(u.repo_dir).exists?
     end
 

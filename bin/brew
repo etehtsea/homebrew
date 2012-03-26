@@ -11,8 +11,6 @@ $:.unshift(library_path)
 require 'homebrew'
 require 'doctor'
 
-Doctor.runtime_checks
-
 case ARGV.first when '-h', '--help', '--usage', '-?', 'help', nil
   require 'cmd/help'
   puts Homebrew.help_s
@@ -30,6 +28,8 @@ when '-v'
     exit 0
   end
 end
+
+Doctor.runtime_checks
 
 def require? path
   require path.to_s.chomp
@@ -69,7 +69,7 @@ begin
   elsif require? `/usr/bin/which brew-#{cmd}.rb`
     exit 0
   elsif require? Homebrew.repository/"Library/Homebrew/cmd"/cmd
-    Homebrew.send cmd.to_s.gsub('-', '_')
+    Homebrew::Cmd.send cmd.to_s.gsub('-', '_')
   else
     onoe "Unknown command: #{cmd}"
     exit 1

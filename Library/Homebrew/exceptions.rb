@@ -90,12 +90,12 @@ class BuildError < Homebrew::InstallationError
     ohai "Exit Status: #{e.exit_status}"
     puts "http://github.com/mxcl/homebrew/blob/master/Library/Formula/#{formula_name}.rb#L#{error_line}"
     ohai "Environment"
-    puts Homebrew.config_s
+    puts Homebrew::Cmd.config_s
     ohai "Build Flags"
     puts %["--use-clang" was specified] if ARGV.include? '--use-clang'
     puts %["--use-llvm" was specified] if ARGV.include? '--use-llvm'
     puts %["--use-gcc" was specified] if ARGV.include? '--use-gcc'
-    Homebrew.dump_build_env e.env
+    Homebrew::Cmd.dump_build_env e.env
     puts
     onoe e
     issues = GitHub.issues_for_formula formula_name

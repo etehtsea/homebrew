@@ -87,9 +87,9 @@ class BeerTasting < Test::Unit::TestCase
     nostdout do
       assert_nothing_raised do
         f=TestBall.new
-        Homebrew.info_formula f
+        Homebrew::Cmd.info_formula f
         Cleaner.new f
-        Homebrew.prune
+        Homebrew::Cmd.prune
         #TODO test diy function too
       end
     end
@@ -116,7 +116,7 @@ class BeerTasting < Test::Unit::TestCase
     assert f3.installed?
 
     nostdout do
-      Homebrew.cleanup_formula f3
+      Homebrew::Cmd.cleanup_formula f3
     end
 
     assert !f1.installed?

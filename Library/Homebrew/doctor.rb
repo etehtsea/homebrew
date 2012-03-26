@@ -44,6 +44,12 @@ module Doctor
         check(t)
       end
     end
+
+    def runtime_checks
+      [:restricted_prefixes, :min_version, :current_directory].each do |t|
+        check(t, true)
+      end
+    end
   end
 
   module Check
@@ -318,6 +324,23 @@ module Doctor
             You can install Homebrew anywhere you want, but some brews may only build
             correctly if you install in /usr/local. Sorry!
           EOS
+        end
+      end
+
+      def restricted_prefixes
+        case Homebrew.prefix.to_s when '/', '/usr'
+          # it may work, but I only see pain this route and don't want to support it
+          "Cowardly refusing to continue at this prefix: #{Homebrew.prefix}"
+        end
+      end
+
+      def current_directory
+        begin
+          Dir.getwd
+
+          nil
+        rescue Errno::ENOENT
+          "The current working directory doesn't exist, cannot proceed."
         end
       end
 
@@ -825,6 +848,15 @@ module Doctor
           # note we only abort if Homebrew is *not* installed as sudo and the user
           # calls brew as root. The fix is to chown brew to root.
           "Cowardly refusing to `sudo brew upgrade'"
+        end
+      end
+
+      def min_version
+        if MacOS.version < 10.5
+          <<-EOS.undent
+          Homebrew requires Leopard or higher. For Tiger support, see:
+          http://github.com/sceaga/homebrew/tree/tiger
+          EOS
         end
       end
 

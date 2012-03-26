@@ -9,6 +9,9 @@ library_path = Pathname.new(__FILE__).realpath.dirname.parent.join("Library/Home
 $:.unshift(library_path)
 
 require 'homebrew'
+require 'doctor'
+
+Doctor.runtime_checks
 
 case ARGV.first when '-h', '--help', '--usage', '-?', 'help', nil
   require 'cmd/help'
@@ -27,22 +30,6 @@ when '-v'
     exit 0
   end
 end
-
-case Homebrew.prefix.to_s when '/', '/usr'
-  # it may work, but I only see pain this route and don't want to support it
-  abort "Cowardly refusing to continue at this prefix: #{Homebrew.prefix}"
-end
-if MacOS.version < 10.5
-  abort <<-EOABORT.undent
-    Homebrew requires Leopard or higher. For Tiger support, see:
-    http://github.com/sceaga/homebrew/tree/tiger
-  EOABORT
-end
-
-# Many Pathname operations use getwd when they shouldn't, and then throw
-# odd exceptions. Reduce our support burden by showing a user-friendly error.
-Dir.getwd rescue abort "The current working directory doesn't exist, cannot proceed."
-
 
 def require? path
   require path.to_s.chomp

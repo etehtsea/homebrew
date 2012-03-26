@@ -13,7 +13,7 @@ module Homebrew
           raise "No available formula for #{name}\n#{msg}" if msg
         end unless ARGV.force?
 
-        Doctor.perform_preinstall_checks
+        Doctor.preinstall_checks
 
         install_formulae ARGV.formulae
       end

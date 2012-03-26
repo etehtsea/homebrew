@@ -12,7 +12,7 @@ module Homebrew
   module Cmd
     class << self
       def upgrade
-        Doctor.perform_preinstall_checks
+        Doctor.preinstall_checks
 
         outdated = if ARGV.named.empty?
           outdated_brews

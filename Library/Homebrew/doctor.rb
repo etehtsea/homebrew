@@ -35,7 +35,7 @@ module Doctor
       end
     end
 
-    def perform_preinstall_checks
+    def preinstall_checks
       [:sudo, :ppc, :writable_install_location, :cellar_exists].each do |t|
         check(t, true)
       end

@@ -3,6 +3,7 @@ require 'formulary'
 
 describe Formulary do
   before(:all) { `rm -rf /tmp/formulary` }
+  after(:all) { Dir.chdir(Homebrew.prefix) }
 
   before do
     Homebrew.stub(:prefix => Pathname('/tmp'))

@@ -20,6 +20,8 @@ Fork's TODO-List:
 4. **(partially done)** *Use rugged (or another ruby-git library)*;
 5. *Improve core documentation*;
 6. **(done)** *Fix ccache support*;
+7. **(done)** Respect user choice and don't override ENV variables, such as (CC, CXX, MAKEFLAGS, CFLAGS and other)
+[Current progress](https://github.com/etehtsea/homebrew/blob/master/CHANGELOG.md)
 
 What Packages Are Available?
 ----------------------------

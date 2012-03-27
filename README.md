@@ -1,10 +1,9 @@
-Homebrew
-========
+# Homebrew
+
 Features, usage and installation instructions are [summarized on the homepage][home].
 
-Fork's TODO-List:
-----------------
-1.  *Make homebrew modular*;
+## Fork aims:
+*  *Make homebrew modular*;
   *   **(done)** *Extract formulas to* [own repository][formulary].
       This idea was declined a couple of times [mxcl/homebrew#3991](https://github.com/mxcl/homebrew/issues/3991),
       [mxcl/homebrew#236](https://github.com/mxcl/homebrew/issues/236). Keeping formulas
@@ -15,27 +14,31 @@ Fork's TODO-List:
       an API that could be used by other application (GUI, for example);
   *   **(done)** *Extract 'Contributions' to 'homebrew-contrib'
       [repo][contrib]*. 'Contributions' is now available through the `brew install homebrew-contrib`;
-2. **(In progress)** *Improve tests*. You need to install `rspec` to run new tests;
-3. **(mostly done)** *3rd party formulas repos support*;
-4. **(partially done)** *Use rugged (or another ruby-git library)*;
-5. *Improve core documentation*;
-6. **(done)** *Fix ccache support*;
-7. **(done)** Respect user choice and don't override ENV variables, such as (CC, CXX, MAKEFLAGS, CFLAGS and other)
+* **(In progress)** *Improve tests*. You need to install `rspec` to run new tests;
+* **(mostly done)** *3rd party formulas repos support*;
+* **(partially done)** *Use rugged (or another ruby-git library)*;
+* *Improve core documentation*;
+* **(done)** *Fix ccache support*;
+* **(done)** Respect user choice and don't override ENV variables, such as (CC, CXX, MAKEFLAGS, CFLAGS and other)
 
 [Current progress](https://github.com/etehtsea/homebrew/blob/master/CHANGELOG.md)
 
-What Packages Are Available?
-----------------------------
+## How to install
+
+``` sh
+$ git clone https://github.com/etehtsea/homebrew.git /usr/local/
+$ brew formulary init
+```
+
+## What Packages Are Available?
 1. You can [browse the Formulary repository on GitHub][formulary].
 2. Or type `brew search` for a list.
 3. Or visit [braumeister.org][braumeister] to browse packages online.
 
-More Documentation
-------------------
+## More Documentation
 `brew help` or `man brew` or check our [wiki][].
 
-Who Are You?
-------------
+## Who Are You?
 I'm [Max Howell][mxcl] and I'm a splendid chap.
 
 

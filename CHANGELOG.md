@@ -1,5 +1,22 @@
 ## 0.9.0 (Unreleased) ##
 
+*  Moved `Formulary` to `/usr/local/formulary`
+
+*  Experimental 3rd party repositories support with following commands:
+      * `brew formulary init` - pull main repository
+      * `brew formulary add/remove/list` - add/remove/list repos
+
+*  Centralized `Doctor` checks and introduced `Doctor.preinstall_checks` and `Doctor.runtime_checks`
+
+*  Added possibility to experinent with ENV flags, such as `CC`, `CXX`, `CFLAGS`, `CXXFLAGS`, `MAKEFLAGS`, so
+   now brew respects user choice. For example: `MAKEFLAGS=-j5 CC=gcc-4.7 brew install <smth>`
+   Moreover, you `homebrew` doesn't directly depend on `Xcode`, you should simply have your compiler in the path
+   (warning: no guarantee that formula won't fail)
+
+*  Fixed ccache support
+  
+*  Splitted `Utils` to [modules](https://github.com/etehtsea/homebrew/tree/master/Library/Homebrew/utils).
+
 *  Refactored `update` mechanism. Introduced two new commands:
       * `brew selfupdate` which updates homebrew core
       * `brew repoupdate` which updates formulary

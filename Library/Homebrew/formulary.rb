@@ -29,12 +29,18 @@ module Formulary
 
     def add(name)
       create unless exists?
+      dir = name.split('/').last
 
-      if list.include?(name.split('/').last)
+      if list.include?(dir)
         onoe "Already added"
       else
-        u = Updater.new(name)
-        Git::Repo.new(u.repo_dir).exists?
+        begin
+          u = Updater.new(name)
+          Git::Repo.new(u.repo_dir).exists?
+        rescue ErrorDuringExecution => e
+          onoe e.message
+          FileUtils.rm_rf(Homebrew.formulary + dir)
+        end
       end
     end
 

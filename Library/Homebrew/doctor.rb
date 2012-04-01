@@ -196,7 +196,7 @@ module Doctor
       def broken_symlinks
         broken_symlinks = []
         %w[lib include sbin bin etc share].each do |d|
-          d = HOMEBREW_PREFIX/d
+          d = Homebrew.prefix/d
           d.find do |pn|
             if pn.symlink? and pn.readlink.expand_path.to_s =~ /^#{Homebrew.prefix}/ and not pn.exist?
               broken_symlinks << pn

@@ -53,15 +53,15 @@ module Homebrew
           puts "Not installed"
         end
 
+        history = github_info f.name
+        puts history if history
+
         the_caveats = (f.caveats || "").strip
         unless the_caveats.empty?
           puts
+          ohai "Caveats"
           puts f.caveats
-          puts
         end
-
-        history = github_info f.name
-        puts history if history
 
       rescue FormulaUnavailableError
         # check for DIY installation
@@ -80,21 +80,16 @@ module Homebrew
 
     private
 
-      def github_info name
-        formula_name = Formula.path(name).basename
-        user = 'mxcl'
-        branch = 'master'
+      def github_info(name)
+        path = Formula.path(name).realpath
 
-        if Git.installed?
-          gh_user= Git::Config.get('github.user')
-          /^\*\s*(.*)/.match(Git::Repo.new(Homebrew.repository).branch)
-          unless $1.nil? || $1.empty? || $1.chomp == 'master' || gh_user.empty?
-            branch = $1.chomp
-            user = gh_user
-          end
-        end
+        repo = Git::Repo.new(path.dirname)
+        url = repo.config('remote.origin.url').gsub(/.git$/, '')
+        repo_name = url.split('/').last
+        rel_path = path.to_s.gsub(/#{Homebrew.formulary}\/#{repo_name}\//, '')
+        branch = repo.branch.gsub(/^\* /, '')
 
-        "http://github.com/#{user}/homebrew/commits/#{branch}/Library/Formula/#{formula_name}"
+        "#{url}/commits/#{branch}/#{rel_path}"
       end
     end
   end

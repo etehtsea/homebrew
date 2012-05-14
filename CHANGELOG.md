@@ -1,5 +1,7 @@
 ## 0.9.0 (Unreleased) ##
 
+*  Made project structure more usual
+
 *  Moved `Formulary` to `/usr/local/formulary`
 
 *  Experimental 3rd party repositories support with following commands:

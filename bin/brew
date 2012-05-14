@@ -59,7 +59,7 @@ begin
   cmd = aliases[cmd] if aliases[cmd]
 
   # Add example external commands to PATH before checking.
-  ENV['PATH'] += ":#{Homebrew.repository}/Library/Contributions/examples"
+  ENV['PATH'] += ":#{Homebrew.repository}/lib/Contributions/examples"
 
   if Unix.available?("brew-#{cmd}")
     %w[CACHE CELLAR LIBRARY_PATH PREFIX REPOSITORY].each do |e|
@@ -68,7 +68,7 @@ begin
     exec "brew-#{cmd}", *ARGV
   elsif require? `/usr/bin/which brew-#{cmd}.rb`
     exit 0
-  elsif require? Homebrew.repository/"Library/Homebrew/cmd"/cmd
+  elsif require? Homebrew.repository/"lib/homebrew/cmd"/cmd
     Homebrew::Cmd.send cmd.to_s.gsub('-', '_')
   else
     onoe "Unknown command: #{cmd}"

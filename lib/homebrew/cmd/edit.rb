@@ -1,4 +1,4 @@
-require 'formula'
+require 'homebrew/formula'
 
 module Homebrew
   class Cmd

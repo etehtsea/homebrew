@@ -6,6 +6,8 @@
 
 ORIGINAL_PATHS = ENV['PATH'].split(':').map{ |p| File.expand_path p }
 
+lib = File.expand_path('../../', __FILE__)
+$:.unshift lib unless $:.include?(lib)
 require 'homebrew'
 
 at_exit do

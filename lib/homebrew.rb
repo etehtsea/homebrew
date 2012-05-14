@@ -51,7 +51,7 @@ module Homebrew
 
     # Where we link under
     def prefix
-      @@prefix ||= Pathname.new(brew_file).dirname.parent
+      @@prefix ||= Pathname('/usr/local/')
     end
 
     # Where .git is found

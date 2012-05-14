@@ -1,5 +1,5 @@
-require 'keg'
-require 'formula'
+require 'homebrew/keg'
+require 'homebrew/formula'
 
 module Homebrew
   module Cmd

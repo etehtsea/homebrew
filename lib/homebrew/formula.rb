@@ -16,6 +16,9 @@ class Formula
   # Will only be non-nil during the stage method.
   attr_reader :buildpath
 
+  # FIXME: temporary stubbed for compatibility
+  def self.fails_with(*args); end
+
   # Homebrew determines the name
   def initialize name='__UNKNOWN__', path=nil
     set_instance_variable 'homepage'
@@ -364,7 +367,7 @@ class Formula
       cached_formula
     else
       # FIXME: added for compatibility
-      Pathname(Homebrew.formulary + "main/Formula/#{name}")
+      Pathname(Homebrew.formulary + "formulary/Formula/#{name}")
     end
   end
 

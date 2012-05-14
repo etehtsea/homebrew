@@ -1,4 +1,4 @@
-require 'formulary'
+require 'homebrew/formulary'
 
 module Homebrew
   module Cmd

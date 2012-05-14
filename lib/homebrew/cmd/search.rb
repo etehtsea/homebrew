@@ -1,5 +1,5 @@
-require "formula"
-require "blacklist"
+require 'homebrew/formula'
+require 'homebrew/blacklist'
 
 module Homebrew
   module Cmd
@@ -21,7 +21,7 @@ module Homebrew
           search_results = search_brews rx
           puts_columns search_results
 
-          if not query.to_s.empty? and $stdout.tty? and msg = blacklisted?(query)
+          if not query.to_s.empty? and $stdout.tty? and msg = Blacklist.include?(query)
             unless search_results.empty?
               puts
               puts "If you meant `#{query}' precisely:"
@@ -30,7 +30,7 @@ module Homebrew
             puts msg
           end
 
-          if search_results.empty? and not blacklisted? query
+          if search_results.empty? and not Blacklist.include?(query)
             puts "No formula found for \"#{query}\". Searching open pull requests..."
             GitHub.find_pull_requests(rx) { |pull| puts pull }
           end

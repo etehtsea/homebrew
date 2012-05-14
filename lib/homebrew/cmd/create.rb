@@ -1,5 +1,5 @@
-require 'formula'
-require 'blacklist'
+require 'homebrew/formula'
+require 'homebrew/blacklist'
 
 module Homebrew
   module Cmd
@@ -30,7 +30,7 @@ module Homebrew
             end
 
             unless ARGV.force?
-              if msg = blacklisted?(fc.name)
+              if msg = Blacklist.include?(fc.name)
                 raise "#{fc.name} is blacklisted for creation.\n#{msg}\nIf you really want to create this formula use --force."
               end
 

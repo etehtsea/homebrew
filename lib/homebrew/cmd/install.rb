@@ -1,6 +1,6 @@
-require 'formula_installer'
-require 'blacklist'
-require 'doctor'
+require 'homebrew/formula_installer'
+require 'homebrew/blacklist'
+require 'homebrew/doctor'
 
 module Homebrew
   module Cmd
@@ -9,7 +9,7 @@ module Homebrew
         raise FormulaUnspecifiedError if ARGV.named.empty?
 
         ARGV.named.each do |name|
-          msg = blacklisted? name
+          msg = Blacklist.include? name
           raise "No available formula for #{name}\n#{msg}" if msg
         end unless ARGV.force?
 

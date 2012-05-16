@@ -17,7 +17,6 @@ EXIT=0
 /usr/bin/ruby test_utils.rb $* || EXIT=1
 /usr/bin/ruby test_ARGV.rb $* || EXIT=1
 /usr/bin/ruby test_ENV.rb $* || EXIT=1
-/usr/bin/ruby test_updater.rb $* || EXIT=1
 /usr/bin/ruby test_string.rb $* || EXIT=1
 
 exit $EXIT

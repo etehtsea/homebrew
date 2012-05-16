@@ -18,11 +18,9 @@ module Homebrew
     def prefix; Pathname.new '/private/tmp/testbrew/prefix'; end
     def repository; Homebrew.prefix; end
     def cache; Homebrew.prefix.parent+"cache"; end
-    def cache_formila; Homebrew.prefix.parent+"formula_cache"; end
+    def cache_formula; Homebrew.prefix.parent+"formula_cache"; end
     def cellar; Homebrew.prefix.parent+"cellar"; end
-    def user_agent; "Homebrew"; end
     def www; 'http://example.com'; end
-    def curl_args; '-fsLA'; end
   end
 end
 

@@ -73,15 +73,6 @@ module Homebrew
       @@logs ||= Pathname.new('~/Library/Logs/Homebrew/').expand_path
     end
 
-    def user_agent
-      @@user_agent ||= "Homebrew #{version}" \
-                       "(Ruby #{RUBY_VERSION}-#{RUBY_PATCHLEVEL};" \
-                       "Mac OS X #{MacOS.full_version})"
-    end
-
-    def curl_args
-      '-qf#LA'
-    end
 
     def recommended_llvm
       2326

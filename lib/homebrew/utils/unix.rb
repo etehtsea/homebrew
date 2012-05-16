@@ -87,10 +87,15 @@ module Utils
     end
 
     def curl *args
+      user_agent ||= "Homebrew #{Homebrew.version}" \
+                     "(Ruby #{RUBY_VERSION}-#{RUBY_PATCHLEVEL};" \
+                     "Mac OS X #{MacOS.full_version})"
+      curl_args = '-qf#LA'
+
       curl = Pathname('/usr/bin/curl')
       raise "#{curl} is not executable" unless curl.exist? and curl.executable?
 
-      args = [Homebrew.curl_args, Homebrew.user_agent, *args]
+      args = [curl_args, user_agent, *args]
       # See https://github.com/mxcl/homebrew/issues/6103
       args << "--insecure" if MacOS.version < 10.6
       args << "--verbose" if ENV['HOMEBREW_CURL_VERBOSE']

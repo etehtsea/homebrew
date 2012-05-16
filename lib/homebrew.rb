@@ -102,14 +102,6 @@ module Homebrew
     def issues_url
       "https://github.com/mxcl/homebrew/wiki/checklist-before-filing-a-new-issue"
     end
-
-    def library_path=(path)
-      @@library_path=path
-    end
-
-    def library_path
-      @@library_path ||= nil
-    end
   end
 end
 

@@ -19,7 +19,6 @@ def Object.const_missing(name)
     :HOMEBREW_CELLAR        => 'Homebrew.cellar',
     :HOMEBREW_USER_AGENT    => 'Homebrew.user_agent',
     :HOMEBREW_CURL_ARGS     => 'Homebrew.curl_args',
-    :HOMEBREW_LIBRARY_PATH  => 'Homebrew.library_path',
     :HOMEBREW_REPOSITORY    => 'Homebrew.repository',
     :HOMEBREW_LOGS          => 'Homebrew.logs',
     :FORMULARY_REPOSITORY   => 'Homebrew.formulary',

@@ -22,14 +22,16 @@ Features, usage and installation instructions are [summarized on the homepage][h
 * *Improve core documentation*;
 * *Be helpful*. Make usual (and useful) help output. Like `brew install -h`;
 * **(done)** *Fix ccache support*;
-* **(done)** Respect user choice and don't override ENV variables, such as (CC, CXX, MAKEFLAGS, CFLAGS and other)
+* **(done)** Respect user choice and don't override `ENV` variables, such as (`CC`, `CXX`, `MAKEFLAGS`, `CFLAGS` and other)
 
 [Current progress](https://github.com/etehtsea/homebrew/blob/master/CHANGELOG.md)
 
 ## How to install
 
 ``` sh
-$ git clone https://github.com/etehtsea/homebrew.git /usr/local/
+$ git clone https://github.com/etehtsea/homebrew.git <Whatever you want
+dir, for example ~/homebrew>
+$ export PATH=$PATH:$HOME/homebrew/bin
 $ brew formulary init
 ```
 

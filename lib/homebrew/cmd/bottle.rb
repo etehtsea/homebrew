@@ -1,6 +1,6 @@
-require 'formula'
-require 'bottles'
-require 'tab'
+require 'homebrew/formula'
+require 'homebrew/bottles'
+require 'homebrew/tab'
 
 module Homebrew
   module Cmd

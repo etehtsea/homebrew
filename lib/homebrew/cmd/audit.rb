@@ -1,5 +1,5 @@
-require 'formula'
-require 'utils'
+require 'homebrew/formula'
+require 'homebrew/utils'
 
 module Homebrew
   module Cmd

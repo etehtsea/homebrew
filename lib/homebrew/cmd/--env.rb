@@ -1,4 +1,4 @@
-require 'extend/ENV'
+require 'homebrew/extend/ENV'
 
 module Homebrew
   module Cmd

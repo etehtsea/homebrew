@@ -1,6 +1,6 @@
-require 'cmd/outdated'
-require 'cmd/install'
-require 'doctor'
+require 'homebrew/cmd/outdated'
+require 'homebrew/cmd/install'
+require 'homebrew/doctor'
 
 class Fixnum
   def plural_s

@@ -1,4 +1,4 @@
-require 'utils/git'
+require 'homebrew/utils/git'
 
 module Homebrew
   module Cmd

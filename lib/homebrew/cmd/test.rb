@@ -1,6 +1,6 @@
-require 'extend/ENV'
-require 'utils/hardware'
-require 'keg'
+require 'homebrew/extend/ENV'
+require 'homebrew/utils/hardware'
+require 'homebrew/keg'
 
 ENV.extend(Homebrew::Env)
 ENV.setup_build_environment

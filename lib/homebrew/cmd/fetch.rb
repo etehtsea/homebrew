@@ -1,4 +1,4 @@
-require 'formula'
+require 'homebrew/formula'
 
 # Downloads the tarballs for the given formulae to the Cache
 module Homebrew

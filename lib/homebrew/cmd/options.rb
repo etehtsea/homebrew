@@ -1,5 +1,5 @@
-require 'formula'
-require 'cmd/outdated'
+require 'homebrew/formula'
+require 'homebrew/cmd/outdated'
 
 
 module Homebrew extend self

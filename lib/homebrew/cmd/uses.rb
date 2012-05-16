@@ -1,4 +1,4 @@
-require 'formula'
+require 'hombrew/formula'
 
 # `brew uses foo bar` now returns formula that use both foo and bar
 # Rationale: If you want the union just run the command twice and

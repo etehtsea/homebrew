@@ -1,4 +1,4 @@
-require 'doctor'
+require 'homebrew/doctor'
 
 module Homebrew
   module Cmd

@@ -62,7 +62,7 @@ module Homebrew
           ohai "Caveats"
           puts f.caveats
         end
-/
+
       rescue FormulaUnavailableError
         # check for DIY installation
         d = Homebrew.prefix + name

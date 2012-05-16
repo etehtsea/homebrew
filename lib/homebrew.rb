@@ -22,6 +22,9 @@ module Homebrew
       'http://mxcl.github.com/homebrew/'
     end
 
+    # Public: Download cache directory
+    #
+    # Returns cache directory as a Pathname
     def cache
       @@cache ||= if ENV['HOMEBREW_CACHE']
                     Pathname(ENV['HOMEBREW_CACHE'])
@@ -35,44 +38,62 @@ module Homebrew
                   end
     end
 
-    # Where brews installed via URL are cached
+    # Public: Where brews installed via URL are cached
+    #
+    # Returns formulas cache directory as a Pathname
     def cache_formula
       @@cache_formula ||= cache + "Formula"
     end
 
-    # Where bottles are cached
+    # Public: Where bottles are cached
+    #
+    # Returns bottles cache directory as a Pathname
     def cache_bottles
       @@cache_bottles ||= cache + "Bottles"
     end
 
+    # Public: Where brew binary is located
+    #
+    # Returns Pathname to brew binary
     def brew_file
       @@brew_file ||= ENV['HOMEBREW_BREW_FILE'] || Unix.which('brew')
     end
 
-    # Where we link under
+    # Public: Where we link under
+    #
+    # Returns Pathname
     def prefix
       @@prefix ||= Pathname('/usr/local/')
     end
 
-    # Where .git is found
+    # Public: Where .git is found
+    #
+    # Returns Pathname
     def repository
-      @@repository ||= Pathname.new(brew_file).realpath.dirname.parent
+      @@repository ||= Pathname(brew_file).realpath.dirname.parent
     end
 
+    # Public: Where formularies is found
+    #
+    # Returns Pathname
     def formulary
       @@formulary ||= prefix + 'formulary'
     end
 
-    # Where we store built products; /usr/local/Cellar if it exists,
+    # Public: Where we store built products; /usr/local/Cellar if it exists,
     # otherwise a Cellar relative to the Repository.
+    #
+    # Returns Pathname
     def cellar
       @@cellar ||= ((prefix + "Cellar").exist? ? prefix : repository) + "Cellar"
     end
 
+    # Public: Where logs are found
+    #
+    # Returns Pathname
     def logs
-      @@logs ||= Pathname.new('~/Library/Logs/Homebrew/').expand_path
+      @@logs ||= Pathname('~/Library/Logs/Homebrew/').expand_path
     end
-
 
     def recommended_llvm
       2326

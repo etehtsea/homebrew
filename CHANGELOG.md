@@ -1,5 +1,7 @@
 ## 0.9.0 (Unreleased) ##
 
+*  Namespace `lib` properly in `Homebrew` module
+
 *  Made project structure more usual
 
 *  Moved `Formulary` to `/usr/local/formulary`

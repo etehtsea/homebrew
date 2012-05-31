@@ -18,14 +18,14 @@ module Homebrew
         elsif valid_url ARGV[0]
           info_formula Formula.factory(ARGV.shift)
         else
-          ARGV.formulae.each{ |f| info_formula f }
+          ARGV.formulae.each { |f| info_formula f }
         end
       end
 
       def info_formula f
         exec 'open', github_info(f.name) if ARGV.flag? '--github'
 
-        puts "#{f.name} #{f.version}"
+        puts "#{Color.em f.name} #{Color.green f.version}"
         puts f.homepage
 
         if f.keg_only?
@@ -35,7 +35,7 @@ module Homebrew
           puts
         end
 
-        puts "Depends on: #{f.deps*', '}" unless f.deps.empty?
+        puts "#{Color.white 'Depends on:'} #{f.deps*', '}" unless f.deps.empty?
 
         if f.rack.directory?
           kegs = f.rack.children
@@ -46,11 +46,11 @@ module Homebrew
             puts
             tab = Tab.for_keg keg
             unless tab.used_options.empty?
-              puts "  Installed with: #{tab.used_options*', '}"
+              puts "#{Color.white 'Installed with:'} #{tab.used_options*', '}"
             end
           end
         else
-          puts "Not installed"
+          puts Color.white 'Not installed'
         end
 
         history = github_info f.name

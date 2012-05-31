@@ -29,7 +29,7 @@ when '-v'
   end
 end
 
-Doctor.runtime_checks
+Homebrew::Doctor.runtime_checks
 
 def require? path
   require path.to_s.chomp

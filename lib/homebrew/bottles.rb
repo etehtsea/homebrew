@@ -16,12 +16,12 @@ end
 def bottle_native? f
   return true if bottle_native_regex.match(f.bottle_url)
   # old brew bottle style
-  return true if MacOS.lion? && old_bottle_regex.match(f.bottle_url)
+  return true if Homebrew::MacOS.lion? && old_bottle_regex.match(f.bottle_url)
   return false
 end
 
 def built_bottle? f
-  Tab.for_formula(f).built_bottle
+  Homebrew::Tab.for_formula(f).built_bottle
 end
 
 def bottle_current? f
@@ -29,7 +29,7 @@ def bottle_current? f
 end
 
 def bottle_native_suffix
-  ".#{MacOS.cat}#{bottle_suffix}"
+  ".#{Homebrew::MacOS.cat}#{bottle_suffix}"
 end
 
 def bottle_suffix
@@ -37,7 +37,7 @@ def bottle_suffix
 end
 
 def bottle_native_regex
-  /(\.#{MacOS.cat}\.bottle\.tar\.gz)$/
+  /(\.#{Homebrew::MacOS.cat}\.bottle\.tar\.gz)$/
 end
 
 def bottle_regex

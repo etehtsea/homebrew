@@ -56,3 +56,9 @@ module Homebrew
     end
   end
 end
+
+# FIXME: Added for compatibility
+module HomebrewArgvExtension
+  require 'homebrew/extend/ARGV'
+  include Homebrew::ArgvExtension
+end

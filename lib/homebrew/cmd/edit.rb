@@ -33,8 +33,8 @@ module Homebrew
     private
 
       def library_folders
-        Dir["#{Homebrew.repository}/Library/*"].reject do |d|
-          case File.basename(d) when 'LinkedKegs', 'Aliases' then true end
+        Dir["#{Homebrew.prefix}/Library/*"].reject do |d|
+          case File.basename(d) when 'LinkedKegs'; true end
         end
       end
     end

@@ -60,7 +60,7 @@ module Homebrew
             f = Formula.factory(name) rescue nil
             if not f or (f.version != version or ARGV.switch? "s" and not f.installed?)
               puts "Removing #{pn}..."
-              rm pn unless ARGV.switch? 'n'
+              FileUtils.rm pn unless ARGV.switch? 'n'
             end
           end
         end

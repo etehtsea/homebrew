@@ -5,12 +5,14 @@ require 'homebrew/extend/ARGV'
 require 'homebrew/extend/string'
 require 'homebrew/utils'
 require 'homebrew/exceptions'
+
 require 'fileutils'
 require 'yaml'
 
-include Utils
-
 ARGV.extend(HomebrewArgvExtension)
+
+# FIXME
+include Homebrew::Utils
 
 module Homebrew
   class << self
@@ -78,6 +80,13 @@ module Homebrew
     # Returns Pathname
     def formulary
       @@formulary ||= prefix + 'formulary'
+    end
+
+    # Public: Where LinkedKegs is found
+    #
+    # Returns Pathname
+    def linked_kegs
+      @linked_kegs ||= prefix + 'Library/LinkedKegs'
     end
 
     # Public: Where we store built products; /usr/local/Cellar if it exists,

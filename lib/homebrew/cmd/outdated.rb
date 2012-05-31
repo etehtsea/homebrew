@@ -7,7 +7,7 @@ module Homebrew
         outdated_brews.each do |f|
           if $stdout.tty? and not ARGV.flag? '--quiet'
             versions = f.rack.cd{ Dir['*'] }.join(', ')
-            puts "#{f.name} (#{versions} < #{f.version})"
+            puts "#{f.name.ljust(15)} (#{Color.red versions} -> #{Color.green f.version})"
           else
             puts f.name
           end

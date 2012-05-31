@@ -4,7 +4,7 @@ module Homebrew
       class << self
         def blue  ; bold 34     ; end
         def white ; bold 39     ; end
-        def red   ; underline 31; end
+        def red   ; bold 31; end
         def yellow; underline 33; end
         def reset ; escape 0    ; end
         def em    ; underline 39; end

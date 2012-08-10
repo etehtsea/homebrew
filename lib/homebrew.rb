@@ -89,12 +89,11 @@ module Homebrew
       @linked_kegs ||= prefix + 'Library/LinkedKegs'
     end
 
-    # Public: Where we store built products; /usr/local/Cellar if it exists,
-    # otherwise a Cellar relative to the Repository.
+    # Public: Where we store built products; /usr/local/Cellar
     #
     # Returns Pathname
     def cellar
-      @@cellar ||= ((prefix + "Cellar").exist? ? prefix : repository) + "Cellar"
+      @@cellar ||= prefix + "Cellar"
     end
 
     # Public: Where logs are found

@@ -29,8 +29,7 @@ Features, usage and installation instructions are [summarized on the homepage][h
 ## How to install
 
 ``` sh
-$ git clone https://github.com/etehtsea/homebrew.git <Whatever you want
-dir, for example ~/homebrew>
+$ git clone https://github.com/etehtsea/homebrew.git $HOME/homebrew
 $ export PATH=$PATH:$HOME/homebrew/bin
 $ brew formulary init
 ```

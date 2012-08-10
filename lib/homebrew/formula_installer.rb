@@ -238,7 +238,7 @@ module Homebrew
     end
 
     def clean
-      require 'cleaner'
+      require 'homebrew/cleaner'
       Cleaner.new f
     rescue Exception => e
       opoo "The cleaning step did not complete successfully"
